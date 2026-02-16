@@ -1,1076 +1,142 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beurssignalen — Algorithmic Trading Signals</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-deep: #0a0e1a;
-  --bg-card: #111827;
-  --bg-card-hover: #1a2237;
-  --bg-surface: #0d1220;
-  --mint: #3DFBB0;
-  --mint-dim: rgba(61, 251, 176, 0.12);
-  --mint-glow: rgba(61, 251, 176, 0.3);
-  --gold: #F0C75E;
-  --gold-dim: rgba(240, 199, 94, 0.12);
-  --gold-glow: rgba(240, 199, 94, 0.3);
-  --electric: #4E8CFF;
-  --electric-dim: rgba(78, 140, 255, 0.12);
-  --electric-glow: rgba(78, 140, 255, 0.3);
-  --red: #FF6B6B;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-dim: #64748B;
-  --border: rgba(255,255,255,0.06);
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'Space Mono', monospace;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-body);
-  background: var(--bg-deep);
-  color: var(--text-primary);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ─── Grain overlay ─── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* ─── Typography ─── */
-h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
-h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
-h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
-h3 { font-size: 1.25rem; }
-p { line-height: 1.7; color: var(--text-secondary); }
-
-.mono { font-family: var(--font-mono); }
-.mint { color: var(--mint); }
-.gold { color: var(--gold); }
-.electric { color: var(--electric); }
-
-/* ─── Layout ─── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
-/* ─── Nav ─── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10, 14, 26, 0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 0;
-}
-nav .container {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  font-weight: 700; font-size: 1.2rem; letter-spacing: -0.03em;
-  display: flex; align-items: center; gap: 10px;
-}
-.nav-logo .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--mint);
-  box-shadow: 0 0 12px var(--mint-glow);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--mint-glow); }
-  50% { opacity: 0.5; box-shadow: 0 0 4px var(--mint-glow); }
-}
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a {
-  color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;
-  font-weight: 500; transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--text-primary); }
-.nav-cta {
-  background: var(--mint) !important;
-  color: var(--bg-deep) !important;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-weight: 600 !important;
-  font-size: 0.85rem !important;
-  transition: transform 0.2s, box-shadow 0.2s !important;
-}
-.nav-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--mint-glow);
-}
-
-/* ─── Hero ─── */
-.hero {
-  padding: 160px 0 100px;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -200px; right: -200px;
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(61,251,176,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -100px; left: -200px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(78,140,255,0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero .container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--mint-dim);
-  border: 1px solid rgba(61,251,176,0.15);
-  padding: 6px 16px;
-  border-radius: 100px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--mint);
-  margin-bottom: 24px;
-  animation: fadeSlideUp 0.6s ease-out;
-}
-.hero-badge .live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--mint);
-  animation: pulse-dot 1.5s ease-in-out infinite;
-}
-.hero h1 {
-  margin-bottom: 20px;
-  animation: fadeSlideUp 0.6s ease-out 0.1s both;
-}
-.hero h1 em {
-  font-style: normal;
-  background: linear-gradient(135deg, var(--mint), #7DFCD2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.hero p {
-  font-size: 1.1rem;
-  max-width: 520px;
-  margin-bottom: 36px;
-  animation: fadeSlideUp 0.6s ease-out 0.2s both;
-}
-.hero-actions {
-  display: flex; gap: 16px; flex-wrap: wrap;
-  animation: fadeSlideUp 0.6s ease-out 0.3s both;
-}
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--mint);
-  color: var(--bg-deep);
-  padding: 14px 32px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.95rem;
-  border: none; cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--mint-glow);
-}
-.btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: transparent;
-  color: var(--text-primary);
-  padding: 14px 32px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-}
-.btn-secondary:hover {
-  border-color: rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.03);
-}
-
-/* Phone mockup */
-.phone-mockup {
-  position: relative;
-  animation: fadeSlideUp 0.8s ease-out 0.4s both;
-}
-.phone {
-  width: 280px;
-  margin: 0 auto;
-  background: #1a1f2e;
-  border-radius: 32px;
-  padding: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(61,251,176,0.05);
-}
-.phone-screen {
-  background: #0f1219;
-  border-radius: 22px;
-  padding: 20px 16px;
-  min-height: 420px;
-  position: relative;
-  overflow: hidden;
-}
-.phone-notch {
-  width: 100px; height: 24px;
-  background: #1a1f2e;
-  border-radius: 0 0 14px 14px;
-  margin: -20px auto 16px;
-}
-.tg-header {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.tg-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--mint), #0B8A5E);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.75rem; color: white;
-}
-.tg-name { font-weight: 600; font-size: 0.85rem; }
-.tg-sub { font-size: 0.65rem; color: var(--text-dim); }
-
-.signal-msg {
-  background: var(--bg-card);
-  border-radius: 12px 12px 12px 4px;
-  padding: 14px;
-  margin-bottom: 10px;
-  border-left: 3px solid var(--mint);
-  animation: msgSlide 0.5s ease-out both;
-}
-.signal-msg:nth-child(2) { animation-delay: 1s; }
-.signal-msg:nth-child(3) { animation-delay: 2s; border-left-color: var(--gold); }
-.signal-msg .sig-type {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--mint);
-  margin-bottom: 6px;
-}
-.signal-msg .sig-type.insider { color: var(--gold); }
-.signal-msg .sig-ticker {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 4px;
-}
-.signal-msg .sig-detail {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  line-height: 1.5;
-}
-.signal-msg .sig-profit {
-  display: inline-block;
-  margin-top: 8px;
-  background: rgba(61,251,176,0.1);
-  color: var(--mint);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-@keyframes msgSlide {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── Stats bar ─── */
-.stats-bar {
-  padding: 40px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-surface);
-}
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  text-align: center;
-}
-.stat-item .stat-value {
-  font-family: var(--font-mono);
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 700;
-  color: var(--mint);
-  margin-bottom: 4px;
-}
-.stat-item .stat-label {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* ─── Lead gen / Breakout Booster ─── */
-.leadgen {
-  padding: 100px 0;
-  position: relative;
-}
-.leadgen::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 50%; transform: translateX(-50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(61,251,176,0.04) 0%, transparent 60%);
-  pointer-events: none;
-}
-.leadgen-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.leadgen-content { position: relative; z-index: 2; }
-.section-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--mint);
-  margin-bottom: 16px;
-}
-.section-label.gold { color: var(--gold); }
-.section-label.electric { color: var(--electric); }
-.leadgen h2 { margin-bottom: 16px; }
-.leadgen p { margin-bottom: 28px; }
-
-.email-capture {
-  display: flex; gap: 12px;
-  max-width: 480px;
-}
-.email-capture input {
-  flex: 1;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 18px;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.email-capture input::placeholder { color: var(--text-dim); }
-.email-capture input:focus { border-color: rgba(61,251,176,0.4); }
-.email-capture button {
-  background: var(--mint);
-  color: var(--bg-deep);
-  border: none;
-  border-radius: 10px;
-  padding: 14px 24px;
-  font-weight: 700;
-  font-family: var(--font-body);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.email-capture button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--mint-glow);
-}
-
-.book-visual {
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
-.book-card {
-  width: 300px;
-  background: linear-gradient(160deg, #131b2e 0%, #0d1220 100%);
-  border: 1px solid rgba(61,251,176,0.12);
-  border-radius: 16px;
-  padding: 40px 30px;
-  text-align: center;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-  transform: rotate(-2deg);
-  transition: transform 0.3s;
-}
-.book-card:hover { transform: rotate(0deg) scale(1.02); }
-.book-icon {
-  width: 64px; height: 64px;
-  margin: 0 auto 20px;
-  background: var(--mint-dim);
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem;
-}
-.book-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-}
-.book-card p {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-}
-
-/* ─── Transparency Board ─── */
-.transparency {
-  padding: 100px 0;
-  background: var(--bg-surface);
-  position: relative;
-}
-.transparency::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--mint-dim), transparent);
-}
-.section-header {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 60px;
-}
-.section-header h2 { margin-bottom: 12px; }
-
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 40px;
-}
-.result-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  transition: transform 0.2s, border-color 0.2s;
-}
-.result-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(61,251,176,0.15);
-}
-.result-card .rc-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 14px;
-}
-.result-card .rc-ticker {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 1.05rem;
-}
-.result-card .rc-type {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-.rc-type.aandelen { background: var(--mint-dim); color: var(--mint); }
-.rc-type.insider { background: var(--gold-dim); color: var(--gold); }
-.rc-type.futures { background: var(--electric-dim); color: var(--electric); }
-
-.result-card .rc-profit {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 1.6rem;
-  color: var(--mint);
-  margin-bottom: 6px;
-}
-.result-card .rc-profit.loss { color: var(--red); }
-.result-card .rc-meta {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-}
-.result-card .rc-bar {
-  height: 4px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 2px;
-  margin-top: 14px;
-  overflow: hidden;
-}
-.result-card .rc-bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: var(--mint);
-}
-.result-card .rc-bar-fill.gold-bar { background: var(--gold); }
-.result-card .rc-bar-fill.electric-bar { background: var(--electric); }
-
-.results-cta {
-  text-align: center;
-}
-
-/* ─── Products ─── */
-.products {
-  padding: 100px 0;
-}
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.product-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px 28px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s, border-color 0.3s;
-}
-.product-card:hover {
-  transform: translateY(-4px);
-}
-.product-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.product-card.mint-card::before { background: linear-gradient(90deg, var(--mint), #7DFCD2); }
-.product-card.mint-card:hover { border-color: rgba(61,251,176,0.2); }
-.product-card.gold-card::before { background: linear-gradient(90deg, var(--gold), #F7DC8C); }
-.product-card.gold-card:hover { border-color: rgba(240,199,94,0.2); }
-.product-card.electric-card::before { background: linear-gradient(90deg, var(--electric), #82B1FF); }
-.product-card.electric-card:hover { border-color: rgba(78,140,255,0.2); }
-
-.product-icon {
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem;
-  margin-bottom: 20px;
-}
-.mint-card .product-icon { background: var(--mint-dim); }
-.gold-card .product-icon { background: var(--gold-dim); }
-.electric-card .product-icon { background: var(--electric-dim); }
-
-.product-card h3 { margin-bottom: 10px; font-size: 1.2rem; }
-.product-card p { font-size: 0.9rem; margin-bottom: 20px; }
-
-.product-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-.product-tag {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 6px;
-  letter-spacing: 0.02em;
-}
-.mint-card .product-tag { background: var(--mint-dim); color: var(--mint); }
-.gold-card .product-tag { background: var(--gold-dim); color: var(--gold); }
-.electric-card .product-tag { background: var(--electric-dim); color: var(--electric); }
-
-.product-link {
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex; align-items: center; gap: 6px;
-  transition: gap 0.2s;
-}
-.product-link:hover { gap: 10px; }
-.mint-card .product-link { color: var(--mint); }
-.gold-card .product-link { color: var(--gold); }
-.electric-card .product-link { color: var(--electric); }
-
-/* ─── Why section ─── */
-.why {
-  padding: 100px 0;
-  background: var(--bg-surface);
-  position: relative;
-}
-.why-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.why-points { display: flex; flex-direction: column; gap: 24px; }
-.why-point {
-  display: flex; gap: 16px;
-  padding: 20px;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-}
-.why-point-icon {
-  width: 44px; height: 44px; min-width: 44px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-  background: var(--mint-dim);
-}
-.why-point h4 { font-size: 1rem; margin-bottom: 4px; }
-.why-point p { font-size: 0.85rem; }
-
-/* ─── Telegram CTA ─── */
-.telegram-cta {
-  padding: 100px 0;
-  position: relative;
-}
-.telegram-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(78,140,255,0.06) 0%, transparent 60%);
-  pointer-events: none;
-}
-.tg-cta-inner {
-  background: linear-gradient(160deg, #131b2e, #0d1220);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 60px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-.tg-cta-inner::before {
-  content: '';
-  position: absolute;
-  top: -80px; right: -80px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(78,140,255,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-.tg-cta-content { position: relative; z-index: 2; }
-.tg-cta-content h2 { margin-bottom: 12px; }
-.tg-cta-content p { margin-bottom: 28px; }
-.btn-telegram {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: #2AABEE;
-  color: white;
-  padding: 14px 32px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.95rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.btn-telegram:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(42,171,238,0.3);
-}
-.tg-cta-visual {
-  display: flex; justify-content: center;
-  position: relative; z-index: 2;
-}
-.mini-phone {
-  width: 220px;
-  background: #1a1f2e;
-  border-radius: 26px;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-}
-.mini-screen {
-  background: #0f1219;
-  border-radius: 18px;
-  padding: 16px 12px;
-}
-.mini-notch {
-  width: 70px; height: 18px;
-  background: #1a1f2e;
-  border-radius: 0 0 10px 10px;
-  margin: -16px auto 12px;
-}
-.mini-msg {
-  background: var(--bg-card);
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-left: 2px solid var(--mint);
-  font-size: 0.68rem;
-}
-.mini-msg:last-child { border-left-color: var(--gold); }
-.mini-msg .mm-label {
-  font-size: 0.58rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--mint);
-  margin-bottom: 3px;
-}
-.mini-msg:last-child .mm-label { color: var(--gold); }
-.mini-msg .mm-ticker { font-weight: 700; font-family: var(--font-mono); font-size: 0.78rem; }
-.mini-msg .mm-sub { color: var(--text-dim); font-size: 0.6rem; margin-top: 2px; }
-
-/* ─── Footer ─── */
-footer {
-  padding: 40px 0;
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-footer p { font-size: 0.8rem; color: var(--text-dim); }
-footer a { color: var(--text-secondary); text-decoration: none; }
-footer .footer-disclaimer {
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  max-width: 600px;
-  margin: 12px auto 0;
-  line-height: 1.6;
-}
-
-/* ─── Animations ─── */
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── Responsive ─── */
-@media (max-width: 900px) {
-  .hero .container,
-  .leadgen-inner,
-  .why-inner,
-  .tg-cta-inner {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .products-grid, .results-grid {
-    grid-template-columns: 1fr;
-  }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-  }
-  .phone-mockup { order: -1; }
-  .tg-cta-inner { padding: 36px 24px; }
-  .nav-links { display: none; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Beurssignalen Insider</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #080a0d; color: #e5e7eb; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
+        .accent-mint { color: #00FFC3; }
+        .bg-mint { background-color: #00FFC3; }
+        .text-gold { color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        .profit-glow { text-shadow: 0 0 10px rgba(0, 255, 195, 0.4); }
+    </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-<!-- Nav -->
-<nav>
-  <div class="container">
-    <div class="nav-logo">
-      <span class="dot"></span> Beurssignalen
-    </div>
-    <div class="nav-links">
-      <a href="#resultaten">Resultaten</a>
-      <a href="#producten">Producten</a>
-      <a href="#waarom">Waarom</a>
-      <a href="#telegram">Telegram</a>
-      <a href="#" class="nav-cta">Gratis Gids →</a>
-    </div>
-  </div>
-</nav>
-
-<!-- Hero -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="live-dot"></span> Live signalen actief
-      </div>
-      <h1>Stop met gokken.<br>Start met <em>structuur.</em></h1>
-      <p>Onze algoritmes scannen de markt 24/7 en slaan pas aan als alle lichten op groen staan. Ontvang bewezen signalen voor aandelen, opties, futures en insider-transacties — direct op je telefoon.</p>
-      <div class="hero-actions">
-        <a href="#" class="btn-primary">Download Breakout Booster ↓</a>
-        <a href="#resultaten" class="btn-secondary">Bekijk resultaten</a>
-      </div>
-    </div>
-    <div class="phone-mockup">
-      <div class="phone">
-        <div class="phone-screen">
-          <div class="phone-notch"></div>
-          <div class="tg-header">
-            <div class="tg-avatar">BS</div>
-            <div>
-              <div class="tg-name">Beurssignalen Pro</div>
-              <div class="tg-sub">3 signalen vandaag</div>
+    <div class="flex">
+        <aside class="w-64 min-h-screen border-r border-white/5 p-6 hidden lg:block">
+            <div class="mb-12">
+                <svg width="150" height="20" viewBox="0 0 192 27" xmlns="http://www.w3.org/2000/svg" class="fill-current text-white">
+                    <path d="M158.067 19.44c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863V3.834c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.504-.09.99-.198 1.458-.324.468-.144.81-.297 1.026-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v14.85c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.999-.054c-.324 0-.666-.009-1.026-.027h-2.106c-.36.018-.72.027-1.08.027-.342.018-.657.036-.945.054zm-49.282 0c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863v-5.346c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.486-.09.963-.198 1.431-.324.486-.144.837-.297 1.053-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v8.1c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.972-.054c-.342 0-.693-.009-1.053-.027h-2.106c-.36.018-.711.027-1.053.027l-.972.054zm2.997-15.741a1.54 1.54 0 0 1-1.134-.459 1.509 1.509 0 0 1-.459-1.107c0-.486.162-.882.486-1.188.324-.306.693-.459 1.107-.459.486 0 .873.153 1.161.459.306.306.459.702.459 1.188 0 .414-.162.783-.486 1.107a1.54 1.54 0 0 1-1.134.459z" />
+                </svg>
             </div>
-          </div>
-          <div class="signal-msg">
-            <div class="sig-type">🟢 Aandelen Signaal</div>
-            <div class="sig-ticker">OSS — One Stop Systems</div>
-            <div class="sig-detail">Entry: $2.84 → Target: $3.40<br>Volume-explosie gedetecteerd</div>
-            <div class="sig-profit">+19.7%</div>
-          </div>
-          <div class="signal-msg">
-            <div class="sig-type">🟢 Opties Signaal</div>
-            <div class="sig-ticker">ALB — Albemarle Corp</div>
-            <div class="sig-detail">Call $62 • 21 Mar exp<br>Gevestigde uitbraak boven weerstand</div>
-            <div class="sig-profit">+39.74%</div>
-          </div>
-          <div class="signal-msg">
-            <div class="sig-type insider">🔶 Insider Alert</div>
-            <div class="sig-ticker">LLKKF — Lloyds Banking</div>
-            <div class="sig-detail">Directeur koop • Cluster aankoop<br>3 insiders kochten afgelopen 7 dagen</div>
-            <div class="sig-profit">+150%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+            <nav class="space-y-2 text-sm">
+                <a href="#" class="block p-3 rounded-lg bg-white/5 text-white font-bold">Dashboard</a>
+                <a href="#" class="block p-3 rounded-lg text-gray-500 hover:text-white transition">Insider Signalen</a>
+                <a href="#" class="block p-3 rounded-lg text-gray-500 hover:text-white transition">Aandelen & Opties</a>
+                <a href="#" class="block p-3 rounded-lg text-gray-500 hover:text-white transition">Future Tracker</a>
+                <div class="pt-10">
+                    <p class="text-[10px] uppercase tracking-widest text-gray-600 mb-4 font-bold">Account</p>
+                    <a href="#" class="block p-3 rounded-lg text-gray-500 hover:text-white transition">Instellingen</a>
+                    <a href="#" class="block p-3 rounded-lg text-red-500/70 hover:text-red-500 transition">Uitloggen</a>
+                </div>
+            </nav>
+        </aside>
 
-<!-- Stats Bar -->
-<section class="stats-bar">
-  <div class="container">
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-value">4</div>
-        <div class="stat-label">Signaalcategorieën</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">$1.694</div>
-        <div class="stat-label">Insider winst jan '26</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">150%</div>
-        <div class="stat-label">Beste trade LLKKF</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">24/7</div>
-        <div class="stat-label">Markt monitoring</div>
-      </div>
-    </div>
-  </div>
-</section>
+        <main class="flex-1 p-6 lg:p-10">
+            <header class="flex justify-between items-end mb-10">
+                <div>
+                    <h1 class="text-3xl font-black text-white">Welkom terug, Insider.</h1>
+                    <p class="text-gray-500 text-sm mt-1">Status: <span class="text-gold font-bold uppercase tracking-widest text-[10px]">Premium Member</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-600 font-bold uppercase">Totale Portefeuille Winst</p>
+                    <p class="text-2xl font-black accent-mint profit-glow">+ $ 12.450,12</p>
+                </div>
+            </header>
 
-<!-- Lead Gen - Breakout Booster -->
-<section class="leadgen" id="gids">
-  <div class="container">
-    <div class="leadgen-inner">
-      <div class="leadgen-content">
-        <div class="section-label">Gratis gids</div>
-        <h2>De Breakout Booster</h2>
-        <p>Leer de exacte marktstructuren herkennen die onze algoritmes gebruiken om uitbraken te detecteren. Geen vage beloftes — puur data, meetbare patronen en directe toepassing in uw eigen strategie.</p>
-        <div class="email-capture">
-          <input type="email" placeholder="Uw e-mailadres">
-          <button>Verstuur →</button>
-        </div>
-      </div>
-      <div class="book-visual">
-        <div class="book-card">
-          <div class="book-icon">📈</div>
-          <h3 class="mint">Breakout Booster</h3>
-          <p>De strategie achter onze signalen — nu gratis in uw inbox</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Transparency Board -->
-<section class="transparency" id="resultaten">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">Transparency Board</div>
-      <h2>Recente resultaten — <span class="mint">Laatste 30 dagen</span></h2>
-      <p>Geen verborgen verliezen. Alle trades, transparant gepresenteerd.</p>
-    </div>
-
-    <div class="results-grid">
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">LLKKF</span>
-          <span class="rc-type insider">Insider</span>
-        </div>
-        <div class="rc-profit">+150%</div>
-        <div class="rc-meta">Lloyds Banking • 14 dagen</div>
-        <div class="rc-bar"><div class="rc-bar-fill gold-bar" style="width:100%"></div></div>
-      </div>
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">ALB</span>
-          <span class="rc-type aandelen">Opties</span>
-        </div>
-        <div class="rc-profit">+39.74%</div>
-        <div class="rc-meta">Albemarle Corp • Call $62</div>
-        <div class="rc-bar"><div class="rc-bar-fill" style="width:40%"></div></div>
-      </div>
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">BTC/USD</span>
-          <span class="rc-type futures">Futures</span>
-        </div>
-        <div class="rc-profit">+22.3%</div>
-        <div class="rc-meta">Bitcoin Future • Long positie</div>
-        <div class="rc-bar"><div class="rc-bar-fill electric-bar" style="width:22%"></div></div>
-      </div>
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">OSS</span>
-          <span class="rc-type aandelen">Aandelen</span>
-        </div>
-        <div class="rc-profit">+19.7%</div>
-        <div class="rc-meta">One Stop Systems • Breakout</div>
-        <div class="rc-bar"><div class="rc-bar-fill" style="width:20%"></div></div>
-      </div>
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">TSCO</span>
-          <span class="rc-type insider">Insider</span>
-        </div>
-        <div class="rc-profit">+12.4%</div>
-        <div class="rc-meta">Tractor Supply Co • Directeur koop</div>
-        <div class="rc-bar"><div class="rc-bar-fill gold-bar" style="width:12%"></div></div>
-      </div>
-      <div class="result-card">
-        <div class="rc-header">
-          <span class="rc-ticker">SPY</span>
-          <span class="rc-type futures">Futures</span>
-        </div>
-        <div class="rc-profit loss">-4.2%</div>
-        <div class="rc-meta">S&P 500 Short • Stop loss geraakt</div>
-        <div class="rc-bar"><div class="rc-bar-fill" style="width:4%; background: var(--red)"></div></div>
-      </div>
-    </div>
-
-    <div class="results-cta">
-      <a href="#" class="btn-secondary">Bekijk ons volledige archief →</a>
-    </div>
-  </div>
-</section>
-
-<!-- Products -->
-<section class="products" id="producten">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">Onze signalen</div>
-      <h2>Vier producten. Eén doel: <span class="mint">rendement.</span></h2>
-      <p>Elk product heeft een eigen algoritme, afgestemd op een ander marktsegment.</p>
-    </div>
-
-    <div class="products-grid">
-      <div class="product-card mint-card">
-        <div class="product-icon">📊</div>
-        <h3>Aandelen & Opties</h3>
-        <p>Gevestigde uitbraken en volume-explosies in Amerikaanse aandelen en opties. Maximaal rendement met heldere entry- en exit-punten.</p>
-        <div class="product-tags">
-          <span class="product-tag">Breakouts</span>
-          <span class="product-tag">Volume scans</span>
-          <span class="product-tag">Optiestrategie</span>
-        </div>
-        <a href="#" class="product-link">Bekijk signalen →</a>
-      </div>
-
-      <div class="product-card gold-card">
-        <div class="product-icon">🏛️</div>
-        <h3>Insider Signalen</h3>
-        <p>Handel zij aan zij met degenen die de regels maken. Volg de transacties van politici en directeuren voordat de markt reageert.</p>
-        <div class="product-tags">
-          <span class="product-tag">Politici trades</span>
-          <span class="product-tag">Directeuren</span>
-          <span class="product-tag">Cluster buys</span>
-        </div>
-        <a href="#" class="product-link">Bekijk signalen →</a>
-      </div>
-
-      <div class="product-card electric-card">
-        <div class="product-icon">⚡</div>
-        <h3>Future Signalen</h3>
-        <p>De snelle wereld van indexen en crypto. Voor de belegger die op het scherpst van de snede handelt in een digitale, 24/7 markt.</p>
-        <div class="product-tags">
-          <span class="product-tag">Crypto</span>
-          <span class="product-tag">Indexen</span>
-          <span class="product-tag">24/7 actief</span>
-        </div>
-        <a href="#" class="product-link">Bekijk signalen →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Why Section -->
-<section class="why" id="waarom">
-  <div class="container">
-    <div class="why-inner">
-      <div>
-        <div class="section-label">De aanpak</div>
-        <h2>Discipline verslaat emotie.<br><span class="mint">Altijd.</span></h2>
-        <p style="margin-top:12px;">De meeste beleggers verliezen geld omdat ze reageren op emotie in plaats van structuur. Onze algoritmes zijn de oplossing: zij scannen, analyseren en slaan pas aan als de data het bevestigt.</p>
-      </div>
-      <div class="why-points">
-        <div class="why-point">
-          <div class="why-point-icon">🔍</div>
-          <div>
-            <h4>24/7 Marktscanning</h4>
-            <p>Onze systemen scannen de markt continu. U hoeft niet voor uw scherm te zitten — wij doen het werk.</p>
-          </div>
-        </div>
-        <div class="why-point">
-          <div class="why-point-icon">🎯</div>
-          <div>
-            <h4>Alle lichten op groen</h4>
-            <p>Een signaal wordt pas verstuurd als meerdere indicatoren tegelijk bevestigen. Geen half werk.</p>
-          </div>
-        </div>
-        <div class="why-point">
-          <div class="why-point-icon">📱</div>
-          <div>
-            <h4>Direct op uw telefoon</h4>
-            <p>Via Telegram ontvangt u elk signaal in real-time. Drie klikken van melding tot trade.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Telegram CTA -->
-<section class="telegram-cta" id="telegram">
-  <div class="container">
-    <div class="tg-cta-inner">
-      <div class="tg-cta-content">
-        <div class="section-label electric">Gratis telegram kanaal</div>
-        <h2>Proef de actie. <span class="electric">Gratis.</span></h2>
-        <p>Nog niet klaar voor een abonnement? Word gratis lid van ons Telegram kanaal en ontvang dagelijks een voorproefje van onze signalen. Geen verplichtingen, geen creditcard.</p>
-        <a href="#" class="btn-telegram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-1.97 9.28c-.15.67-.54.83-1.09.52l-3.02-2.22-1.46 1.4c-.16.16-.3.3-.61.3l.22-3.06 5.58-5.04c.24-.22-.05-.34-.38-.13l-6.9 4.34-2.97-.93c-.64-.2-.66-.64.14-.95l11.6-4.47c.54-.2 1.01.13.83.95z"/></svg>
-          Word gratis lid →
-        </a>
-      </div>
-      <div class="tg-cta-visual">
-        <div class="mini-phone">
-          <div class="mini-screen">
-            <div class="mini-notch"></div>
-            <div class="mini-msg">
-              <div class="mm-label">🟢 Dagelijks signaal</div>
-              <div class="mm-ticker">NVDA</div>
-              <div class="mm-sub">Breakout boven $142 — volume +240%</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="glass-card p-6 rounded-2xl">
+                    <p class="text-xs text-gray-500 font-bold mb-4 uppercase">Actieve Posities</p>
+                    <div class="flex justify-between items-end">
+                        <span class="text-4xl font-black text-white">14</span>
+                        <span class="text-xs font-bold text-mint bg-mint/10 px-2 py-1 rounded">82% Winrate</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <p class="text-xs text-gray-500 font-bold mb-4 uppercase">Signalen Vandaag</p>
+                    <span class="text-4xl font-black text-white">6</span>
+                </div>
+                <div class="glass-card p-6 rounded-2xl bg-gradient-to-br from-gold/10 to-transparent">
+                    <p class="text-xs text-gold font-bold mb-4 uppercase">Insider Transacties</p>
+                    <span class="text-4xl font-black text-white">2</span>
+                </div>
             </div>
-            <div class="mini-msg">
-              <div class="mm-label">🔶 Insider tip</div>
-              <div class="mm-ticker">MSFT</div>
-              <div class="mm-sub">CEO koop: 50.000 aandelen</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Footer -->
-<footer>
-  <div class="container">
-    <p>© 2026 Beurssignalen — Alle rechten voorbehouden</p>
-    <p class="footer-disclaimer">Beleggen brengt risico's met zich mee. In het verleden behaalde resultaten bieden geen garantie voor de toekomst. Beurssignalen biedt informatie, geen financieel advies. Raadpleeg altijd een financieel adviseur.</p>
-  </div>
-</footer>
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/2">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-white">Live Openstaande Posities</h2>
+                    <span class="flex items-center text-[10px] text-gray-500 uppercase"><span class="w-2 h-2 bg-mint rounded-full mr-2 animate-pulse"></span> Laatste update: 2 min geleden</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-gray-500 font-bold border-b border-white/5 bg-black/20">
+                            <tr>
+                                <th class="p-6">Ticker</th>
+                                <th class="p-6">Entry</th>
+                                <th class="p-6">Huidig</th>
+                                <th class="p-6">Stoploss</th>
+                                <th class="p-6">Target</th>
+                                <th class="p-6">Rendement</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="p-6">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 rounded bg-white/5 flex items-center justify-center font-bold text-[10px] mr-3">TS</span>
+                                        <div><p class="font-bold text-white">TSCO</p><p class="text-[10px] text-gray-500 uppercase">Tesco PLC</p></div>
+                                    </div>
+                                </td>
+                                <td class="p-6 font-mono">$ 245.20</td>
+                                <td class="p-6 font-mono text-white">$ 268.44</td>
+                                <td class="p-6 font-mono text-red-500/70">$ 238.00</td>
+                                <td class="p-6 font-mono text-mint">$ 290.00</td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 rounded-full bg-mint/10 text-mint font-bold text-xs">+ 9.48%</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="p-6">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 rounded bg-gold/10 flex items-center justify-center font-bold text-[10px] mr-3 text-gold">IA</span>
+                                        <div><p class="font-bold text-white">ALB</p><p class="text-[10px] text-gold uppercase tracking-tighter">Insider Alert</p></div>
+                                    </div>
+                                </td>
+                                <td class="p-6 font-mono">$ 112.50</td>
+                                <td class="p-6 font-mono text-white">$ 124.90</td>
+                                <td class="p-6 font-mono text-red-500/70">$ 108.00</td>
+                                <td class="p-6 font-mono text-mint">$ 145.00</td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 rounded-full bg-mint/10 text-mint font-bold text-xs">+ 11.02%</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition border-l-2 border-red-500/30">
+                                <td class="p-6">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 rounded bg-white/5 flex items-center justify-center font-bold text-[10px] mr-3">HY</span>
+                                        <div><p class="font-bold text-white">HY</p><p class="text-[10px] text-gray-500 uppercase">Hynix Inc</p></div>
+                                    </div>
+                                </td>
+                                <td class="p-6 font-mono">$ 89.20</td>
+                                <td class="p-6 font-mono text-white">$ 86.40</td>
+                                <td class="p-6 font-mono text-red-500/70">$ 84.00</td>
+                                <td class="p-6 font-mono text-mint">$ 110.00</td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 rounded-full bg-red-500/10 text-red-500 font-bold text-xs">- 3.14%</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
 
 </body>
 </html>
