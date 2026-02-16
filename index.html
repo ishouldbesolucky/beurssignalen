@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beurssignalen Nieuw | Data-gedreven Trading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f1115; color: #e5e7eb; }
+        .bg-dark-gradient { background: linear-gradient(180deg, #12141a 0%, #0f1115 100%); }
+        .accent-mint { color: #00FFC3; }
+        .bg-mint { background-color: #00FFC3; }
+        .border-gold { border-color: #D4AF37; }
+        .text-gold { color: #D4AF37; }
+        .border-electric { border-color: #007BFF; }
+        .text-electric { color: #007BFF; }
+        .card-blur { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.03); }
+    </style>
+</head>
+<body class="bg-dark-gradient">
+
+    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
+        <div class="text-2xl font-bold tracking-tighter text-white">BEURSSIGNALEN<span class="accent-mint">.</span></div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="#" class="hover:text-white transition">Producten</a>
+            <a href="#" class="hover:text-white transition">Resultaten</a>
+            <a href="#" class="hover:text-white transition">Over ons</a>
+        </div>
+        <a href="#" class="bg-mint text-black px-5 py-2 rounded-full font-bold text-sm hover:scale-105 transition shadow-[0_0_15px_rgba(0,255,195,0.3)]">Mijn Account</a>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">
+                Stop met gokken. <br><span class="accent-mint">Begin met handelen.</span>
+            </h1>
+            <p class="mt-6 text-gray-400 text-lg leading-relaxed">
+                Ontvang real-time signalen gebaseerd op marktstructuur en data, niet op emotie. Sluit je aan bij de slimste beleggers van de Benelux.
+            </p>
+            
+            <div class="mt-10 p-1 bg-gradient-to-r from-emerald-500 to-mint-400 rounded-xl max-w-md">
+                <div class="bg-[#0f1115] p-6 rounded-lg">
+                    <label class="block text-sm font-semibold mb-2 text-white">Ontvang de Gratis Breakout Booster Gids</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="email" placeholder="Je beste e-mailadres" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-mint-400">
+                        <button class="bg-mint text-black px-6 py-3 rounded-lg font-bold hover:brightness-110 transition">Verstuur</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="relative">
+            <div class="absolute -inset-10 bg-mint/10 blur-3xl rounded-full"></div>
+            <div class="relative card-blur border border-white/10 p-4 rounded-2xl shadow-2xl">
+                <div class="bg-[#1a1d23] rounded-lg p-4 mb-4 border border-white/5">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs text-gray-400">Live Trade Tracker</span>
+                        <span class="flex items-center text-xs accent-mint">● Live</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="h-8 bg-white/5 rounded flex items-center px-3 justify-between">
+                            <span class="text-xs">Insider: $TSCO</span> <span class="text-xs accent-mint font-bold">+$1.694,88</span>
+                        </div>
+                        <div class="h-8 bg-white/5 rounded flex items-center px-3 justify-between">
+                            <span class="text-xs">Aandelen: $LLKKF</span> <span class="text-xs accent-mint font-bold">+150.0%</span>
+                        </div>
+                    </div>
+                </div>
+                <img src="https://via.placeholder.com/600x400/1a1d23/ffffff?text=Interactieve+Grafiek+Mockup" alt="Platform Preview" class="rounded-lg shadow-inner">
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 py-12">
+        <div class="border-t border-white/10 pt-12">
+            <h2 class="text-center text-sm uppercase tracking-[0.2em] text-gray-500 mb-8 font-bold">Het Transparency Board (Laatste 30 dagen)</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="p-6 card-blur rounded-xl border border-white/5">
+                    <p class="text-3xl font-bold text-white">$1.694</p>
+                    <p class="text-xs text-gold font-semibold uppercase">Insider Winst</p>
+                </div>
+                <div class="p-6 card-blur rounded-xl border border-white/5">
+                    <p class="text-3xl font-bold text-white">150%</p>
+                    <p class="text-xs accent-mint font-semibold uppercase">Top Uitbraak</p>
+                </div>
+                <div class="p-6 card-blur rounded-xl border border-white/5">
+                    <p class="text-3xl font-bold text-white">39,7%</p>
+                    <p class="text-xs text-electric font-semibold uppercase">Futures AVG</p>
+                </div>
+                <div class="p-6 card-blur rounded-xl border border-white/5">
+                    <p class="text-3xl font-bold text-white">24/7</p>
+                    <p class="text-xs text-gray-400 font-semibold uppercase">Monitoring</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-8 rounded-3xl border border-white/10 card-blur hover:border-mint transition duration-500">
+                <div class="w-12 h-12 bg-mint/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 accent-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Aandelen & Opties</h3>
+                <p class="text-gray-400 text-sm mb-6">Focus op gevestigde uitbraken en volume-explosies. Directe meldingen voor actie.</p>
+                <a href="#" class="accent-mint font-bold text-sm inline-flex items-center group">Bekijk Signalen <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+            </div>
+
+            <div class="p-8 rounded-3xl border border-gold/30 bg-[#1a1d23] hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition duration-500">
+                <div class="w-12 h-12 bg-gold/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3 text-gold">Insider Signalen</h3>
+                <p class="text-gray-400 text-sm mb-6">Handel zij aan zij met degenen die de regels maken. Wij volgen de transacties van politici.</p>
+                <a href="#" class="text-gold font-bold text-sm inline-flex items-center group">Exclusieve Toegang <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+            </div>
+
+            <div class="p-8 rounded-3xl border border-white/10 card-blur hover:border-electric transition duration-500 text-white">
+                <div class="w-12 h-12 bg-electric/20 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-electric" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Future Signalen</h3>
+                <p class="text-gray-400 text-sm mb-6">Snelheid en technologie. Indexen en crypto op het scherpst van de snede.</p>
+                <a href="#" class="text-electric font-bold text-sm inline-flex items-center group">Start Nu <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-6 py-24 text-center">
+        <div class="card-blur border border-white/10 p-12 rounded-[3rem] relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-20">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.891 8.146l-2.003 9.464c-.149.659-.54 1.222-1.09 1.488-.55.266-1.19.231-1.71-.1l-3.322-2.451-1.603 1.545c-.215.207-.514.307-.808.27-.294-.037-.561-.2-.733-.446l-2.46-3.518-2.148-.671c-.604-.188-.934-.841-.755-1.423s.803-.941 1.408-.813l15.196 3.193c.613.129 1.011.722.927 1.344z"/></svg>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-6">Eerst even proeven?</h2>
+            <p class="text-gray-400 mb-8 max-w-md mx-auto">
+                Kijk over onze schouder mee. Ontvang de actie van de dag direct op je smartphone via ons gratis kanaal.
+            </p>
+            <button class="bg-sky-500 text-white px-10 py-4 rounded-full font-bold hover:bg-sky-400 transition flex items-center mx-auto">
+                Word lid van Gratis Telegram
+            </button>
+            <p class="mt-6 text-xs text-gray-500 uppercase tracking-widest">Klikken. Volgen. Handelen.</p>
+        </div>
+    </section>
+
+</body>
+</html>
