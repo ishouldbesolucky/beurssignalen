@@ -1,769 +1,133 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beurssignalen — Algoritmische Handelssignalen</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg-deep: #0a0e1a;
-  --bg-card: #111827;
-  --bg-card-hover: #1a2235;
-  --surface: #151d2e;
-  --mint: #3EEBBE;
-  --mint-dim: rgba(62, 235, 190, 0.15);
-  --gold: #F0C654;
-  --gold-dim: rgba(240, 198, 84, 0.12);
-  --electric: #4D8DFF;
-  --electric-dim: rgba(77, 141, 255, 0.12);
-  --red: #FF6B6B;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --radius: 16px;
-  --radius-sm: 10px;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--bg-deep);
-  color: var(--text-primary);
-  overflow-x: hidden;
-  line-height: 1.6;
-}
-
-/* ── Utility ── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.mono { font-family: 'Space Mono', monospace; }
-
-/* ── Animated grain overlay ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* ── Nav ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10, 14, 26, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  padding: 16px 0;
-}
-nav .container {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--mint), var(--electric));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.nav-links { display: flex; gap: 32px; list-style: none; }
-.nav-links a {
-  color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;
-  font-weight: 500; transition: color 0.3s;
-}
-.nav-links a:hover { color: var(--text-primary); }
-.nav-cta {
-  background: var(--mint); color: var(--bg-deep); border: none; padding: 10px 24px;
-  border-radius: 50px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(62,235,190,0.25); }
-
-/* ── Hero ── */
-.hero {
-  min-height: 100vh; display: flex; align-items: center;
-  padding-top: 100px; position: relative;
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(62,235,190,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(77,141,255,0.04) 0%, transparent 50%);
-}
-.hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--mint-dim); border: 1px solid rgba(62,235,190,0.2);
-  padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; color: var(--mint);
-  font-weight: 600; margin-bottom: 24px;
-  animation: fadeInUp 0.8s ease both;
-}
-.hero-badge::before {
-  content: ''; width: 8px; height: 8px; background: var(--mint);
-  border-radius: 50%; animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.5); }
-}
-.hero h1 {
-  font-size: clamp(2.5rem, 5vw, 3.8rem); font-weight: 800;
-  line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 20px;
-  animation: fadeInUp 0.8s 0.1s ease both;
-}
-.hero h1 .accent {
-  background: linear-gradient(135deg, var(--mint), #7DFFC8);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.hero-sub {
-  font-size: 1.15rem; color: var(--text-secondary); max-width: 480px;
-  margin-bottom: 36px; line-height: 1.7;
-  animation: fadeInUp 0.8s 0.2s ease both;
-}
-
-/* Lead magnet form */
-.lead-form {
-  display: flex; gap: 12px; max-width: 480px;
-  animation: fadeInUp 0.8s 0.3s ease both;
-}
-.lead-form input {
-  flex: 1; padding: 16px 20px; border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.1); background: var(--surface);
-  color: var(--text-primary); font-size: 0.95rem;
-  font-family: inherit; transition: border-color 0.3s;
-}
-.lead-form input::placeholder { color: var(--text-muted); }
-.lead-form input:focus { outline: none; border-color: var(--mint); }
-.lead-form button {
-  padding: 16px 28px; background: var(--mint); color: var(--bg-deep);
-  border: none; border-radius: var(--radius-sm); font-weight: 700;
-  font-size: 0.9rem; cursor: pointer; white-space: nowrap;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.lead-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(62,235,190,0.3); }
-.lead-note {
-  font-size: 0.78rem; color: var(--text-muted); margin-top: 12px;
-  animation: fadeInUp 0.8s 0.4s ease both;
-}
-
-/* Hero phone mockup */
-.hero-visual {
-  display: flex; justify-content: center;
-  animation: fadeInUp 1s 0.4s ease both;
-}
-.phone-mockup {
-  width: 300px; background: #1a1f2e;
-  border-radius: 36px; padding: 12px;
-  border: 2px solid rgba(255,255,255,0.08);
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 120px rgba(62,235,190,0.06);
-  position: relative;
-}
-.phone-notch {
-  width: 120px; height: 28px; background: #0a0e1a;
-  border-radius: 0 0 16px 16px; margin: 0 auto 16px;
-}
-.phone-screen { padding: 16px; }
-.tg-header {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-}
-.tg-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--mint), var(--electric));
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.9rem; color: var(--bg-deep);
-}
-.tg-name { font-weight: 700; font-size: 0.85rem; }
-.tg-sub { font-size: 0.7rem; color: var(--text-muted); }
-
-.tg-message {
-  background: rgba(62,235,190,0.08); border: 1px solid rgba(62,235,190,0.15);
-  border-radius: 14px 14px 14px 4px; padding: 14px; margin-bottom: 12px;
-  animation: messageIn 0.6s ease both;
-}
-.tg-message:nth-child(2) { animation-delay: 1.5s; }
-.tg-message:nth-child(3) { animation-delay: 3s; }
-.tg-signal-tag {
-  font-size: 0.65rem; font-weight: 700; color: var(--mint);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
-}
-.tg-ticker {
-  font-family: 'Space Mono', monospace; font-weight: 700;
-  font-size: 1.1rem; margin-bottom: 4px;
-}
-.tg-details { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5; }
-.tg-profit {
-  display: inline-block; margin-top: 8px; padding: 4px 10px;
-  background: rgba(62,235,190,0.15); color: var(--mint);
-  border-radius: 6px; font-family: 'Space Mono', monospace;
-  font-weight: 700; font-size: 0.8rem;
-}
-.tg-time {
-  text-align: right; font-size: 0.65rem; color: var(--text-muted); margin-top: 6px;
-}
-
-@keyframes messageIn {
-  from { opacity: 0; transform: translateY(12px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ── Transparency Board ── */
-.transparency {
-  padding: 120px 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(62,235,190,0.02) 50%, transparent 100%);
-}
-.section-label {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 2px; color: var(--mint); margin-bottom: 16px;
-}
-.section-label::before {
-  content: ''; width: 24px; height: 2px; background: var(--mint);
-}
-.section-title {
-  font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800;
-  letter-spacing: -1px; margin-bottom: 16px;
-}
-.section-sub {
-  font-size: 1.05rem; color: var(--text-secondary); max-width: 600px; margin-bottom: 48px;
-}
-
-/* Stats row */
-.stats-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
-  margin-bottom: 48px;
-}
-.stat-card {
-  background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius); padding: 28px 24px; text-align: center;
-  transition: transform 0.3s, border-color 0.3s;
-}
-.stat-card:hover { transform: translateY(-4px); border-color: rgba(62,235,190,0.2); }
-.stat-value {
-  font-family: 'Space Mono', monospace; font-size: 2rem;
-  font-weight: 700; color: var(--mint); margin-bottom: 6px;
-}
-.stat-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
-
-/* Recent trades table */
-.trades-table {
-  width: 100%; border-collapse: separate; border-spacing: 0 8px;
-}
-.trades-table th {
-  text-align: left; font-size: 0.72rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 1.5px;
-  color: var(--text-muted); padding: 0 20px 12px;
-}
-.trades-table td {
-  padding: 18px 20px; background: var(--bg-card);
-  font-size: 0.9rem; transition: background 0.3s;
-}
-.trades-table tr:hover td { background: var(--bg-card-hover); }
-.trades-table tr td:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
-.trades-table tr td:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-.ticker-cell {
-  font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.95rem;
-}
-.type-badge {
-  font-size: 0.7rem; font-weight: 700; padding: 4px 10px;
-  border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
-}
-.type-badge.aandeel { background: var(--mint-dim); color: var(--mint); }
-.type-badge.insider { background: var(--gold-dim); color: var(--gold); }
-.type-badge.future { background: var(--electric-dim); color: var(--electric); }
-.profit-cell {
-  font-family: 'Space Mono', monospace; font-weight: 700;
-}
-.profit-cell.positive { color: var(--mint); }
-.profit-cell.negative { color: var(--red); }
-.trades-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  margin-top: 24px; color: var(--mint); font-weight: 600;
-  text-decoration: none; font-size: 0.9rem; transition: gap 0.3s;
-}
-.trades-cta:hover { gap: 14px; }
-
-/* ── Products ── */
-.products { padding: 120px 0; }
-.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.product-card {
-  background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius); padding: 40px 32px; position: relative;
-  overflow: hidden; transition: transform 0.3s, border-color 0.3s;
-}
-.product-card:hover { transform: translateY(-6px); }
-.product-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.product-card.mint { border-color: rgba(62,235,190,0.15); }
-.product-card.mint::before { background: linear-gradient(90deg, var(--mint), transparent); }
-.product-card.mint:hover { border-color: rgba(62,235,190,0.3); }
-.product-card.gold { border-color: rgba(240,198,84,0.15); }
-.product-card.gold::before { background: linear-gradient(90deg, var(--gold), transparent); }
-.product-card.gold:hover { border-color: rgba(240,198,84,0.3); }
-.product-card.blue { border-color: rgba(77,141,255,0.15); }
-.product-card.blue::before { background: linear-gradient(90deg, var(--electric), transparent); }
-.product-card.blue:hover { border-color: rgba(77,141,255,0.3); }
-
-.product-icon {
-  width: 56px; height: 56px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem; margin-bottom: 24px;
-}
-.mint .product-icon { background: var(--mint-dim); }
-.gold .product-icon { background: var(--gold-dim); }
-.blue .product-icon { background: var(--electric-dim); }
-
-.product-tag {
-  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1.5px; margin-bottom: 10px;
-}
-.mint .product-tag { color: var(--mint); }
-.gold .product-tag { color: var(--gold); }
-.blue .product-tag { color: var(--electric); }
-
-.product-card h3 {
-  font-size: 1.35rem; font-weight: 800; margin-bottom: 14px;
-  letter-spacing: -0.5px;
-}
-.product-card p {
-  font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;
-  margin-bottom: 28px;
-}
-.product-features {
-  list-style: none; margin-bottom: 32px;
-}
-.product-features li {
-  font-size: 0.82rem; color: var(--text-secondary);
-  padding: 6px 0; display: flex; align-items: center; gap: 10px;
-}
-.product-features li::before {
-  content: '✓'; font-weight: 700; font-size: 0.75rem;
-}
-.mint .product-features li::before { color: var(--mint); }
-.gold .product-features li::before { color: var(--gold); }
-.blue .product-features li::before { color: var(--electric); }
-
-.product-btn {
-  display: block; width: 100%; padding: 14px; border-radius: var(--radius-sm);
-  border: none; font-weight: 700; font-size: 0.9rem; cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.3s; text-align: center;
-  text-decoration: none;
-}
-.mint .product-btn {
-  background: var(--mint); color: var(--bg-deep);
-}
-.mint .product-btn:hover { box-shadow: 0 8px 30px rgba(62,235,190,0.3); }
-.gold .product-btn {
-  background: var(--gold); color: var(--bg-deep);
-}
-.gold .product-btn:hover { box-shadow: 0 8px 30px rgba(240,198,84,0.3); }
-.blue .product-btn {
-  background: var(--electric); color: #fff;
-}
-.blue .product-btn:hover { box-shadow: 0 8px 30px rgba(77,141,255,0.3); }
-
-/* ── Why section ── */
-.why-section {
-  padding: 120px 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(77,141,255,0.02) 50%, transparent 100%);
-}
-.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.why-list { list-style: none; display: flex; flex-direction: column; gap: 28px; }
-.why-item {
-  display: flex; gap: 20px; padding: 24px; border-radius: var(--radius);
-  background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04);
-  transition: border-color 0.3s;
-}
-.why-item:hover { border-color: rgba(62,235,190,0.15); }
-.why-num {
-  font-family: 'Space Mono', monospace; font-size: 1.5rem;
-  font-weight: 700; color: var(--mint); flex-shrink: 0;
-  width: 48px; height: 48px; display: flex; align-items: center;
-  justify-content: center; background: var(--mint-dim);
-  border-radius: 12px;
-}
-.why-item h4 { font-weight: 700; margin-bottom: 6px; font-size: 1rem; }
-.why-item p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
-
-/* ── Telegram CTA ── */
-.telegram-cta {
-  padding: 120px 0;
-}
-.tg-banner {
-  background: linear-gradient(135deg, var(--bg-card) 0%, #1a2540 100%);
-  border: 1px solid rgba(77,141,255,0.15);
-  border-radius: 24px; padding: 64px; display: grid;
-  grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-  position: relative; overflow: hidden;
-}
-.tg-banner::before {
-  content: ''; position: absolute; top: -50%; right: -20%;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(77,141,255,0.08) 0%, transparent 60%);
-  pointer-events: none;
-}
-.tg-banner h2 {
-  font-size: 2.2rem; font-weight: 800; letter-spacing: -1px;
-  margin-bottom: 16px;
-}
-.tg-banner p {
-  color: var(--text-secondary); font-size: 1rem; line-height: 1.7;
-  margin-bottom: 32px;
-}
-.tg-join-btn {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 16px 32px; background: #2AABEE; color: #fff;
-  border: none; border-radius: var(--radius-sm); font-weight: 700;
-  font-size: 1rem; cursor: pointer; text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.tg-join-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(42,171,238,0.3); }
-.tg-join-btn svg { width: 22px; height: 22px; }
-
-.tg-mini-phone {
-  width: 260px; margin: 0 auto;
-  background: #1a1f2e; border-radius: 28px; padding: 10px;
-  border: 2px solid rgba(255,255,255,0.06);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-}
-.tg-mini-notch {
-  width: 80px; height: 20px; background: #0a0e1a;
-  border-radius: 0 0 12px 12px; margin: 0 auto 12px;
-}
-.tg-mini-msg {
-  background: rgba(42,171,238,0.1); border: 1px solid rgba(42,171,238,0.15);
-  border-radius: 12px 12px 12px 4px; padding: 12px; margin: 8px 12px;
-  font-size: 0.72rem; color: var(--text-secondary);
-  animation: miniPulse 3s infinite;
-}
-.tg-mini-msg strong { color: var(--text-primary); display: block; margin-bottom: 4px; }
-@keyframes miniPulse {
-  0%, 100% { opacity: 0.7; } 50% { opacity: 1; }
-}
-
-/* ── Footer ── */
-footer {
-  border-top: 1px solid rgba(255,255,255,0.05);
-  padding: 48px 0; text-align: center;
-}
-footer p { font-size: 0.8rem; color: var(--text-muted); }
-
-/* ── Animations ── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.reveal {
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .hero .container { grid-template-columns: 1fr; text-align: center; }
-  .hero-sub { margin-left: auto; margin-right: auto; }
-  .lead-form { flex-direction: column; margin: 0 auto; }
-  .hero-visual { margin-top: 40px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .products-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-  .why-grid { grid-template-columns: 1fr; }
-  .tg-banner { grid-template-columns: 1fr; text-align: center; padding: 40px 28px; }
-  .nav-links { display: none; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beurssignalen | Data-gedreven Trading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: #e5e7eb; overflow-x: hidden; }
+        .bg-grid { background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 0); background-size: 30px 30px; }
+        .accent-mint { color: #00FFC3; }
+        .bg-mint { background-color: #00FFC3; }
+        .text-gold { color: #D4AF37; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
+        .hero-glow { position: absolute; top: -10%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,255,195,0.1) 0%, transparent 70%); z-index: -1; }
+        /* Forceert wit logo */
+        .site-logo svg { fill: white !important; }
+    </style>
 </head>
-<body>
+<body class="bg-grid">
 
-<!-- ── Navigation ── -->
-<nav>
-  <div class="container">
-    <div class="nav-logo">BEURSSIGNALEN</div>
-    <ul class="nav-links">
-      <li><a href="#resultaten">Resultaten</a></li>
-      <li><a href="#signalen">Signalen</a></li>
-      <li><a href="#waarom">Waarom wij</a></li>
-      <li><a href="#telegram">Gratis kanaal</a></li>
-    </ul>
-    <button class="nav-cta">Start nu →</button>
-  </div>
-</nav>
+    <div class="hero-glow"></div>
 
-<!-- ── Hero ── -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span>Live signalen actief</span>
-      </div>
-      <h1>Stop met gokken.<br><span class="accent">Start met structuur.</span></h1>
-      <p class="hero-sub">Ontvang algoritmische handelssignalen rechtstreeks in Telegram. Gebaseerd op marktstructuur, volume-analyse en insider-data — niet op emotie.</p>
-      <div class="lead-form">
-        <input type="email" placeholder="Uw e-mailadres">
-        <button>Download gratis gids →</button>
-      </div>
-      <p class="lead-note">🔒 Ontvang de Breakout Booster gids gratis. Geen spam, direct opzegbaar.</p>
-    </div>
-    <div class="hero-visual">
-      <div class="phone-mockup">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="tg-header">
-            <div class="tg-avatar">BS</div>
-            <div>
-              <div class="tg-name">Beurssignalen</div>
-              <div class="tg-sub">Aandelen Signalen</div>
+    <nav class="glass sticky top-0 z-50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="/" class="site-logo">
+                <svg width="180" height="25" viewBox="0 0 192 27" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" d="M158.067 19.44c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863V3.834c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.504-.09.99-.198 1.458-.324.468-.144.81-.297 1.026-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v14.85c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.999-.054c-.324 0-.666-.009-1.026-.027h-2.106c-.36.018-.72.027-1.08.027-.342.018-.657.036-.945.054zm-49.282 0c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863v-5.346c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.486-.09.963-.198 1.431-.324.486-.144.837-.297 1.053-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v8.1c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.972-.054c-.342 0-.693-.009-1.053-.027h-2.106c-.36.018-.711.027-1.053.027l-.972.054zm2.997-15.741a1.54 1.54 0 0 1-1.134-.459 1.509 1.509 0 0 1-.459-1.107c0-.486.162-.882.486-1.188.324-.306.693-.459 1.107-.459.486 0 .873.153 1.161.459.306.306.459.702.459 1.188 0 .414-.162.783-.486 1.107a1.54 1.54 0 0 1-1.134.459zM32.539 1.026c.36.018.792.036 1.296.054.522.018 1.026.027 1.512.027h1.296a30.49 30.49 0 0 1 1.269-.027c.432-.018.864-.027 1.296-.027 1.044 0 1.998.108 2.862.324.864.216 1.557.612 2.079 1.188.54.576.81 1.386.81 2.43 0 1.152-.351 2.142-1.053 2.97-.702.81-1.656 1.305-2.862 1.485a8.803 8.803 0 0 1 2.619.54c.81.288 1.458.756 1.944 1.404.486.648.729 1.53.729 2.646 0 .99-.225 1.89-.675 2.7-.432.792-1.125 1.431-2.079 1.917-.954.468-2.196.702-3.726.702h-3.915c-.72.018-1.386.027-1.998.027a65.8 65.8 0 0 0-1.431.054c0-.234.009-.45.027-.648.018-.198.054-.369.108-.513.486-.036.864-.126 1.134-.27.27-.144.459-.396.567-.756.126-.378.189-.918.189-1.62V4.536c0-.594-.054-1.053-.162-1.377-.108-.342-.306-.576-.594-.702-.27-.144-.639-.234-1.107-.27a1.977 1.977 0 0 1-.108-.513 7.8 7.8 0 0 1-.027-.648zm4.536 8.208V2.372c.15-.031.284-.057.405-.077.216-.036.45-.054.702-.054.594 0 1.197.108 1.809.324.63.198 1.152.558 1.566 1.08.432.504.648 1.224.648 2.16a4.17 4.17 0 0 1-.351 1.674c-.234.522-.666.945-1.296 1.269-.612.324-1.494.486-2.646.486h-.837zm0 6.399v-5.238h.621c.666 0 1.332.054 1.998.162a6.111 6.111 0 0 1 1.863.594c.576.27 1.035.675 1.377 1.215.342.522.513 1.206.513 2.052 0 1.17-.315 2.097-.945 2.781-.612.666-1.584.999-2.916.999-.684 0-1.206-.054-1.566-.162a1.214 1.214 0 0 1-.756-.729c-.126-.378-.189-.936-.189-1.674zm17.011 3.969c-1.278 0-2.34-.288-3.186-.864a5.396 5.396 0 0 1-1.917-2.322c-.414-.99-.62-2.07-.62-3.24 0-1.152.224-2.214.674-3.186.45-.972 1.09-1.755 1.917-2.349.846-.594 1.845-.891 2.997-.891 1.17 0 2.106.252 2.808.756a4.446 4.446 0 0 1 1.593 2.025c.36.846.576 1.782.648 2.808a2.14 2.14 0 0 1-.405.918h-1.377c-.612 0-1.305.009-2.079.027-.774 0-1.566.018-2.376.054-.6.013-1.175.032-1.726.055.045.611.144 1.214.295 1.808.234.828.63 1.521 1.188 2.079.576.54 1.386.81 2.43.81a4.34 4.34 0 0 0 1.755-.378 4.607 4.607 0 0 0 1.54-1.188c.143.09.278.216.404.378s.207.315.243.459c-.612.81-1.323 1.386-2.133 1.728-.792.342-1.683.513-2.673.513zm-2.673-9.774c-.225.556-.356 1.294-.394 2.214h5.173c0-1.188-.216-2.151-.648-2.889-.432-.738-1.044-1.107-1.836-1.107-.432 0-.855.135-1.269.405-.414.252-.756.711-1.026 1.377zm11.357 8.586c.684.702 1.63 1.053 2.835 1.053.738 0 1.368-.108 1.89-.324a5.008 5.008 0 0 0 1.485-1.053c.198-.198.378-.405.54-.621.118-.157.217-.324.297-.5-.01.082-.02.159-.027.23-.018.36-.027.639-.027.837 0 .63.063 1.026.19 1.188a1.6 1.6 0 0 0 .485.378c.414-.234.918-.423 1.512-.567a10.227 10.227 0 0 1 1.566-.27c.072-.18.117-.387.135-.621.018-.234.027-.441.027-.621-.504 0-.873-.063-1.107-.189a.909.909 0 0 1-.459-.594c-.072-.27-.108-.621-.108-1.053V7.938c0-.396-.063-.675-.189-.837a.755.755 0 0 0-.405-.351c-.396.198-.936.369-1.62.513-.666.144-1.35.234-2.052.27-.09.162-.144.324-.162.486a4.205 4.205 0 0 0-.027.513c.882.018 1.44.189 1.674.513.234.306.351.774.351 1.404v2.754c0 1.566-.306 2.727-.918 3.483-.612.756-1.359 1.134-2.24 1.134-.847 0-1.432-.315-1.756-.945-.324-.648-.486-1.584-.486-2.808V7.938c0-.396-.063-.675-.189-.837a.755.755 0 0 0-.405-.351c-.414.216-.954.414-1.62.594a8.948 8.948 0 0 1-1.809.324c-.09.162-.144.324-.162.486a4.205 4.205 0 0 0-.027.513c.828.036 1.332.207 1.512.513.18.306.27.774.27 1.404v4.077c0 1.8.342 3.051 1.026 3.753zm17.13-1.242c.163.414.415.693.757.837.36.144.828.234 1.404.27.054.144.09.315.108.513.018.198.027.414.027.648-.27-.018-.594-.036-.972-.054-.36 0-.756-.009-1.188-.027h-1.242c-.63 0-1.296.009-1.998.027-.702.018-1.224.036-1.566.054 0-.234.009-.45.027-.648.018-.198.054-.369.108-.513.468-.036.837-.117 1.107-.243.288-.144.486-.378.594-.702.108-.342.162-.81.162-1.404v-5.346c0-.414-.045-.756-.135-1.026a1.059 1.059 0 0 0-.567-.648c-.288-.144-.73-.225-1.323-.243 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459a10.924 10.924 0 0 0 1.917-.324c.72-.18 1.287-.378 1.7-.594a.755.755 0 0 1 .406.351c.126.162.189.441.189.837 0 .63-.054 1.188-.162 1.674-.08.362-.156.724-.227 1.086.102-.27.186-.507.254-.708.108-.324.225-.594.35-.81a5.91 5.91 0 0 1 1.405-1.566 2.978 2.978 0 0 1 1.863-.621 2.97 2.97 0 0 1 1.863.648c-.054.288-.1.621-.135.999l-.054 1.134v1.053a5.372 5.372 0 0 1-.675.162c-.27.054-.558.081-.864.081-.036-.864-.18-1.431-.432-1.701a1.128 1.128 0 0 0-.891-.405c-.324 0-.666.18-1.026.54-.342.342-.64.801-.891 1.377a4.732 4.732 0 0 0-.378 1.917v2.592c0 .774.08 1.368.243 1.782zm14.633-8.1c.018-.486.036-.945.054-1.377a7.774 7.774 0 0 0-1.755-.702c-.612-.162-1.323-.243-2.133-.243-.45 0-.936.072-1.458.216a5.103 5.103 0 0 0-1.485.621A3.44 3.44 0 0 0 86.65 8.64c-.288.414-.432.909-.432 1.485 0 .72.126 1.314.378 1.782.27.468.693.873 1.27 1.215.593.342 1.376.711 2.348 1.107.81.324 1.422.603 1.836.837.414.234.693.468.837.702.162.234.243.513.243.837 0 .504-.207.918-.62 1.242-.397.324-.964.486-1.702.486-.936 0-1.692-.279-2.268-.837-.558-.558-.9-1.404-1.026-2.538-.27 0-.54.027-.81.081-.252.036-.45.108-.594.216.018.288.027.639.027 1.053.018.414.018.828 0 1.242 0 .414-.018.765-.054 1.053a9.635 9.635 0 0 0 1.863.756c.648.162 1.512.243 2.592.243.936 0 1.773-.153 2.511-.459.756-.324 1.35-.774 1.782-1.35.432-.576.648-1.242.648-1.998 0-.648-.117-1.197-.35-1.647-.235-.45-.63-.855-1.189-1.215-.558-.36-1.323-.72-2.295-1.08-.972-.378-1.683-.693-2.133-.945-.45-.27-.747-.522-.89-.756a1.682 1.682 0 0 1-.19-.81c0-.45.162-.81.486-1.08.342-.27.792-.405 1.35-.405.594 0 1.107.144 1.54.432.431.288.773.657 1.025 1.107.27.45.423.927.46 1.431.251 0 .494-.027.728-.081a2.13 2.13 0 0 0 .621-.243 9.398 9.398 0 0 1-.108-1.431zm23.939 16.578c.702.288 1.602.432 2.7.432.972 0 1.863-.171 2.673-.513a6.836 6.836 0 0 0 2.133-1.296 5.767 5.767 0 0 0 1.377-1.755c.342-.63.513-1.251.513-1.863 0-.72-.162-1.296-.486-1.728-.306-.45-.819-.774-1.539-.972-.702-.198-1.656-.297-2.862-.297-1.152 0-2.007-.027-2.565-.081-.558-.054-.927-.162-1.107-.324-.162-.162-.243-.405-.243-.729 0-.198.072-.432.216-.702a3.06 3.06 0 0 1 .465-.572 6.059 6.059 0 0 0 2.073.356c1.062 0 1.953-.198 2.673-.594.738-.414 1.287-.963 1.647-1.647.378-.684.567-1.449.567-2.295 0-.378-.09-.81-.27-1.296a4.413 4.413 0 0 0-.864-1.431 3.927 3.927 0 0 0-.115-.13 27.138 27.138 0 0 1 1.573.239c.414.071.765.143 1.053.215a6.96 6.96 0 0 0-.054-.864 3.454 3.454 0 0 0-.135-.81h-4.403a5.68 5.68 0 0 0-1.726-.243c-1.062 0-1.962.207-2.7.621-.72.396-1.26.936-1.62 1.62-.36.666-.54 1.413-.54 2.241 0 .972.225 1.782.675 2.43.286.396.626.731 1.02 1.006-.354.345-.657.72-.912 1.127-.342.558-.513 1.134-.513 1.728 0 .414.054.765.162 1.053.126.288.333.531.621.729.144.085.31.157.497.218-.607.282-1.087.66-1.442 1.132-.36.504-.54 1.098-.54 1.782 0 .792.162 1.458.486 1.998.324.54.828.945 1.512 1.215zm.567-5.049c.133-.294.355-.576.668-.847.421.043.909.064 1.465.064 1.242 0 2.178.063 2.808.189.648.126 1.08.324 1.296.594.234.288.351.657.351 1.107 0 .774-.342 1.458-1.026 2.052-.666.594-1.593.891-2.781.891-1.098 0-1.881-.234-2.349-.702-.45-.468-.675-1.161-.675-2.079 0-.486.081-.909.243-1.269zm4.563-6.966c-.378.486-.864.729-1.458.729-.864 0-1.539-.297-2.025-.891-.486-.612-.729-1.476-.729-2.592 0-.738.171-1.404.513-1.998.342-.612.873-.918 1.593-.918.846 0 1.503.351 1.971 1.053.468.684.702 1.503.702 2.457 0 .936-.189 1.656-.567 2.16zm8.012-3.051c0-.414-.045-.756-.135-1.026a1.059 1.059 0 0 0-.567-.648c-.288-.144-.729-.225-1.323-.243 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459a10.924 10.924 0 0 0 1.917-.324c.72-.18 1.287-.378 1.701-.594a.755.755 0 0 1 .405.351c.126.162.189.441.189.837 0 .216-.018.459-.054.729-.018.27-.063.558-.135.864.054-.09.108-.189.162-.297.054-.126.135-.261.243-.405.306-.414.792-.837 1.458-1.269.684-.45 1.503-.675 2.457-.675.684 0 1.314.144 1.89.432.594.27 1.071.729 1.431 1.377.36.63.54 1.494.54 2.592v4.644c0 .936.126 1.566.378 1.89.27.306.675.459 1.215.459.054.162.09.342.108.54.018.18.027.387.027.621-.396-.018-.846-.036-1.35-.054a44.714 44.714 0 0 0-1.593-.027h-1.134c-.396.018-.774.027-1.134.027-.36.018-.675.036-.945.054 0-.234.009-.45.027-.648.018-.198.054-.369.108-.513.648 0 1.116-.162 1.404-.486.306-.342.459-.963.459-1.863v-4.104c0-1.278-.243-2.142-.729-2.592-.468-.468-1.062-.702-1.782-.702-.468 0-.936.153-1.404.459-.468.288-.864.765-1.188 1.431-.306.648-.459 1.521-.459 2.619v2.889c0 .9.135 1.521.405 1.863.27.324.756.486 1.458.486.054.162.09.342.108.54.018.18.027.387.027.621a44.104 44.104 0 0 0-.918-.054c-.36 0-.747-.009-1.161-.027h-2.268c-.396.018-.774.027-1.134.027-.36.018-.675.036-.945.054 0-.234.009-.45.027-.648.018-.198.054-.369.108-.513.702 0 1.188-.162 1.458-.486.27-.342.405-.963.405-1.863v-5.346zm21.349 8.532c.126.234.288.396.486.486a6.085 6.085 0 0 1 1.431-.567 8.987 8.987 0 0 1 1.512-.27c.072-.18.117-.387.135-.621.018-.234.027-.441.027-.621-.486-.036-.855-.117-1.107-.243-.234-.126-.387-.342-.459-.648-.072-.306-.108-.711-.108-1.215v-2.97c0-1.206-.072-2.169-.216-2.889-.144-.738-.45-1.332-.918-1.782-.288-.306-.675-.549-1.161-.729-.468-.198-1.035-.297-1.701-.297-.684 0-1.44.108-2.268.324a10.89 10.89 0 0 0-2.322.891c.072.396.117.873.135 1.431.036.558.036 1.062 0 1.512.126.072.342.126.648.162.306.018.558.027.756.027.018-.378.099-.81.243-1.296s.387-.909.729-1.269c.342-.378.81-.567 1.404-.567.342 0 .648.072.918.216.288.126.54.324.756.594.162.18.279.396.351.648.09.234.144.558.162.972.036.414.054.99.054 1.728-.45.072-.972.162-1.566.27a15.2 15.2 0 0 0-1.836.459 7.573 7.573 0 0 0-1.728.81 4.268 4.268 0 0 0-1.296 1.242c-.324.486-.486 1.08-.486 1.782 0 .882.297 1.584.891 2.106.594.504 1.458.756 2.592.756.666 0 1.233-.081 1.701-.243.468-.18.855-.405 1.161-.675a3.01 3.01 0 0 0 .729-.864c.091-.158.167-.31.228-.457a6.936 6.936 0 0 0-.039.7c0 .504.054.873.162 1.107zm-1.971-1.431c-.414.252-.819.378-1.215.378a1.6 1.6 0 0 1-1.134-.459c-.324-.306-.486-.792-.486-1.458 0-.594.135-1.062.405-1.404.27-.36.621-.639 1.053-.837a5.845 5.845 0 0 1 1.377-.432c.504-.108.99-.189 1.458-.243v1.026c0 .9-.144 1.629-.432 2.187-.27.558-.612.972-1.026 1.242zm17.249 1.053c.846.576 1.908.864 3.186.864.99 0 1.881-.171 2.673-.513.81-.342 1.521-.918 2.133-1.728a1.269 1.269 0 0 0-.243-.459 1.584 1.584 0 0 0-.405-.378c-.45.522-.963.918-1.539 1.188a4.34 4.34 0 0 1-1.755.378c-1.044 0-1.854-.27-2.43-.81-.558-.558-.954-1.251-1.188-2.079a10.431 10.431 0 0 1-.295-1.808 86.778 86.778 0 0 1 1.726-.055c.81-.036 1.602-.054 2.376-.054a90.35 90.35 0 0 1 2.079-.027h1.377a2.14 2.14 0 0 0 .405-.918c-.072-1.026-.288-1.962-.648-2.808a4.446 4.446 0 0 0-1.593-2.025c-.702-.504-1.638-.756-2.808-.756-1.152 0-2.151.297-2.997.891-.828.594-1.467 1.377-1.917 2.349-.45.972-.675 2.034-.675 3.186 0 1.17.207 2.25.621 3.24a5.396 5.396 0 0 0 1.917 2.322zm.119-6.696c.038-.92.169-1.658.394-2.214.27-.666.612-1.125 1.026-1.377.414-.27.837-.405 1.269-.405.792 0 1.404.369 1.836 1.107.432.738.648 1.701.648 2.889h-5.173z" />
+                </svg>
+            </a>
+            <div class="hidden md:flex space-x-10 text-sm font-bold tracking-tight">
+                <a href="#" class="hover:text-white transition text-gray-400">Producten</a>
+                <a href="#" class="hover:text-white transition text-gray-400">Algoritmes</a>
+                <a href="#" class="hover:text-white transition text-gray-400">Resultaten</a>
             </div>
-          </div>
-          <div class="tg-message">
-            <div class="tg-signal-tag">⚡ Nieuw signaal</div>
-            <div class="tg-ticker">OSS — Breakout</div>
-            <div class="tg-details">Entry: $4.82 · Target: $6.10<br>Volume +340% boven gemiddelde</div>
-            <div class="tg-profit">+26.6%</div>
-            <div class="tg-time">14:32</div>
-          </div>
-          <div class="tg-message">
-            <div class="tg-signal-tag">🔒 Insider actie</div>
-            <div class="tg-ticker">TSCO — Director Buy</div>
-            <div class="tg-details">Aankoop: $28.50 · Cluster van 3 insiders</div>
-            <div class="tg-time">09:15</div>
-          </div>
-          <div class="tg-message">
-            <div class="tg-signal-tag">🚀 Future signaal</div>
-            <div class="tg-ticker">BTC/USD — Long</div>
-            <div class="tg-details">Entry: $97,240 · TP1: $99,800</div>
-            <div class="tg-time">08:01</div>
-          </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-white text-sm font-bold border border-white/20 px-4 h-10 flex items-center rounded-lg hover:bg-white/5 transition">Inloggen</a>
+                <a href="#" class="bg-mint text-black px-5 h-10 flex items-center rounded-lg font-black text-sm shadow-[0_0_20px_rgba(0,255,195,0.3)] hover:scale-105 transition">Abonneren</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<!-- ── Transparency Board ── -->
-<section class="transparency" id="resultaten">
-  <div class="container">
-    <div class="section-label">Resultaten</div>
-    <h2 class="section-title reveal">Geen vage beloftes.<br>Keiharde cijfers.</h2>
-    <p class="section-sub reveal">Volledige transparantie over onze trades — inclusief de minder goede. Zo weet u precies waar u aan toe bent.</p>
-
-    <div class="stats-grid reveal">
-      <div class="stat-card">
-        <div class="stat-value">87%</div>
-        <div class="stat-label">Winstpercentage jan '26</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">$1.694</div>
-        <div class="stat-label">Nettowinst Insiders</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">150%</div>
-        <div class="stat-label">Beste trade (LLKKF)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">342</div>
-        <div class="stat-label">Signalen verzonden</div>
-      </div>
-    </div>
-
-    <table class="trades-table reveal">
-      <thead>
-        <tr>
-          <th>Ticker</th>
-          <th>Type</th>
-          <th>Richting</th>
-          <th>Entry</th>
-          <th>Close</th>
-          <th>Resultaat</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="ticker-cell">LLKKF</td>
-          <td><span class="type-badge aandeel">Aandeel</span></td>
-          <td>Long</td>
-          <td class="mono">$1.20</td>
-          <td class="mono">$3.00</td>
-          <td class="profit-cell positive">+150.0%</td>
-        </tr>
-        <tr>
-          <td class="ticker-cell">ALB</td>
-          <td><span class="type-badge aandeel">Aandeel</span></td>
-          <td>Long</td>
-          <td class="mono">$62.40</td>
-          <td class="mono">$87.22</td>
-          <td class="profit-cell positive">+39.7%</td>
-        </tr>
-        <tr>
-          <td class="ticker-cell">TSCO</td>
-          <td><span class="type-badge insider">Insider</span></td>
-          <td>Long</td>
-          <td class="mono">$28.50</td>
-          <td class="mono">$33.80</td>
-          <td class="profit-cell positive">+18.6%</td>
-        </tr>
-        <tr>
-          <td class="ticker-cell">BTC/USD</td>
-          <td><span class="type-badge future">Future</span></td>
-          <td>Long</td>
-          <td class="mono">$94,120</td>
-          <td class="mono">$97,540</td>
-          <td class="profit-cell positive">+3.6%</td>
-        </tr>
-        <tr>
-          <td class="ticker-cell">HY</td>
-          <td><span class="type-badge insider">Insider</span></td>
-          <td>Long</td>
-          <td class="mono">$142.00</td>
-          <td class="mono">$134.20</td>
-          <td class="profit-cell negative">-5.5%</td>
-        </tr>
-      </tbody>
-    </table>
-    <a href="#" class="trades-cta">Bekijk ons volledige archief →</a>
-  </div>
-</section>
-
-<!-- ── Products ── -->
-<section class="products" id="signalen">
-  <div class="container">
-    <div class="section-label">Signalen</div>
-    <h2 class="section-title reveal">Drie algoritmes.<br>Eén doel: rendement.</h2>
-    <p class="section-sub reveal">Elk product scant de markt met zijn eigen strategie. Kies wat bij uw stijl past — of combineer ze voor maximale dekking.</p>
-
-    <div class="products-grid reveal">
-      <!-- Aandelen & Opties -->
-      <div class="product-card mint">
-        <div class="product-icon">📈</div>
-        <div class="product-tag">Aandelen & Opties</div>
-        <h3>Breakout Signalen</h3>
-        <p>Ons algoritme detecteert gevestigde koersuitbraken en volume-explosies in de Amerikaanse aandelenmarkt.</p>
-        <ul class="product-features">
-          <li>Gevalideerde breakout-patronen</li>
-          <li>Volume-analyse in real-time</li>
-          <li>Duidelijke entry, stop-loss & targets</li>
-          <li>Aandelen én opties-signalen</li>
-        </ul>
-        <a href="#" class="product-btn">Bekijk Aandelen Signalen →</a>
-      </div>
-
-      <!-- Insider Signalen -->
-      <div class="product-card gold">
-        <div class="product-icon">🏛️</div>
-        <div class="product-tag">Insider Signalen</div>
-        <h3>De Secret Sauce</h3>
-        <p>Handel zij aan zij met degenen die de regels maken. Volg de trades van politici, directeuren en grootaandeelhouders.</p>
-        <ul class="product-features">
-          <li>Politici & directeuren data</li>
-          <li>Cluster-analyse op insider-koopgedrag</li>
-          <li>Historisch winstpercentage per insider</li>
-          <li>Openstaande posities dashboard</li>
-        </ul>
-        <a href="#" class="product-btn">Bekijk Insider Signalen →</a>
-      </div>
-
-      <!-- Future Signalen -->
-      <div class="product-card blue">
-        <div class="product-icon">⚡</div>
-        <div class="product-tag">Future Signalen</div>
-        <h3>Snelheid & Precisie</h3>
-        <p>Indexen, crypto en grondstoffen — 24/7. Voor de belegger die op het scherpst van de snede handelt in een digitale markt.</p>
-        <ul class="product-features">
-          <li>BTC, ETH & top-altcoins</li>
-          <li>S&P 500, Nasdaq & DAX futures</li>
-          <li>Technische & momentum-analyse</li>
-          <li>24/7 marktdekking</li>
-        </ul>
-        <a href="#" class="product-btn">Bekijk Future Signalen →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Why Section ── -->
-<section class="why-section" id="waarom">
-  <div class="container">
-    <div class="why-grid">
-      <div>
-        <div class="section-label">Waarom Beurssignalen</div>
-        <h2 class="section-title reveal">De meeste beleggers verliezen geld door emotie.</h2>
-        <p class="section-sub reveal">Ons algoritme kent geen angst, geen hebzucht en geen twijfel. Het scant de markt dag en nacht en slaat pas aan wanneer alle lichten op groen staan.</p>
-      </div>
-      <ul class="why-list reveal">
-        <li class="why-item">
-          <div class="why-num">01</div>
-          <div>
-            <h4>Discipline zonder moeite</h4>
-            <p>Geen uren achter uw scherm. Ontvang een signaal, voer het uit in drie klikken, en ga verder met uw dag.</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <div class="why-num">02</div>
-          <div>
-            <h4>Data boven onderbuikgevoel</h4>
-            <p>Elk signaal is gebaseerd op bewezen patronen: volume, koersstructuur en insider-activiteit.</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <div class="why-num">03</div>
-          <div>
-            <h4>Volledige transparantie</h4>
-            <p>Elke trade — winst én verlies — staat in ons openbare archief. Geen verborgen resultaten.</p>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ── Telegram CTA ── -->
-<section class="telegram-cta" id="telegram">
-  <div class="container">
-    <div class="tg-banner reveal">
-      <div>
-        <h2>Eerst proeven?<br>Dat begrijpen we.</h2>
-        <p>Ons gratis Telegram kanaal geeft u een voorproefje van onze signalen. Geen verplichtingen, geen kosten. Ervaar zelf hoe het werkt voordat u beslist.</p>
-        <a href="#" class="tg-join-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          Gratis lid worden
-        </a>
-      </div>
-      <div class="tg-mini-phone">
-        <div class="tg-mini-notch"></div>
-        <div class="tg-mini-msg">
-          <strong>⚡ Gratis Signaal</strong>
-          AAPL breakout boven $198 — Volume +280%
+    <header class="max-w-7xl mx-auto px-6 pt-20 lg:pt-32 pb-20 grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+            <div class="inline-block px-3 py-1 rounded-full border border-mint/30 bg-mint/5 text-mint text-xs font-bold uppercase tracking-[0.2em] mb-8">
+                Next-Gen AI Algoritmes
+            </div>
+            <h1 class="text-6xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter">
+                Handelen <br>zonder <br><span class="accent-mint italic">emoties.</span>
+            </h1>
+            <p class="mt-10 text-gray-400 text-lg lg:text-xl leading-relaxed max-w-lg">
+                Stop met gokken. Onze algoritmes scannen de markt 24/7 op winstgevende uitbraken. Ontvang real-time signalen direct op je smartphone.
+            </p>
+            
+            <div class="mt-14 glass p-8 rounded-[2rem] max-w-md border-white/10 shadow-2xl relative">
+                <div class="absolute -top-3 left-8 bg-mint text-black text-[10px] font-black px-2 py-0.5 rounded">GRATIS GIDS</div>
+                <h3 class="text-white font-bold mb-5 flex items-center text-sm">
+                    Ontvang de Breakout Booster Gids
+                </h3>
+                <div class="flex flex-col gap-3">
+                    <input type="email" placeholder="Uw beste e-mailadres" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:outline-none focus:border-mint transition text-white text-sm">
+                    <button class="w-full bg-mint text-black py-4 rounded-xl font-black hover:brightness-110 transition shadow-lg uppercase text-xs tracking-widest">Download nu</button>
+                </div>
+            </div>
         </div>
-        <div class="tg-mini-msg" style="animation-delay: 1s;">
-          <strong>📊 Marktupdate</strong>
-          S&P 500 raakt weerstand bij 6,120 — afwachten
-        </div>
-        <div class="tg-mini-msg" style="animation-delay: 2s;">
-          <strong>✅ Trade gesloten</strong>
-          NVDA +12.4% in 3 dagen — target bereikt
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ── Footer ── -->
-<footer>
-  <div class="container">
-    <p>© 2026 Beurssignalen. Beleggen brengt risico's met zich mee. In het verleden behaalde resultaten bieden geen garantie voor de toekomst.</p>
-  </div>
-</footer>
+        <div class="relative flex justify-center lg:justify-end">
+            <div class="absolute -inset-10 bg-mint/10 blur-[120px] rounded-full"></div>
+            <div class="relative glass rounded-[3rem] p-5 w-80 lg:w-[360px] shadow-2xl border-white/20">
+                <div class="bg-black/60 rounded-[2.2rem] p-6 overflow-hidden border border-white/10 aspect-[9/16]">
+                    <div class="text-center text-[10px] text-gray-600 mb-6 font-bold uppercase tracking-widest">Vandaag 14:02</div>
+                    
+                    <div class="glass p-4 rounded-2xl mb-6 border-l-4 border-mint shadow-xl transform hover:-translate-y-1 transition-transform">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-black text-mint tracking-widest uppercase">Signaal: Aandelen</span>
+                            <span class="text-[9px] text-gray-500">Nu</span>
+                        </div>
+                        <div class="text-sm text-white font-black leading-tight">🚨 BUY $OSS @ $42.50</div>
+                        <div class="text-[10px] text-gray-500 mt-2 font-medium">TP: $48.00 | SL: $40.50</div>
+                        <div class="mt-3 text-[10px] text-mint font-bold underline">Klik hier om trade te openen →</div>
+                    </div>
 
-<script>
-// Scroll reveal
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.15 });
-reveals.forEach(el => observer.observe(el));
-</script>
+                    <div class="mt-20 space-y-3 opacity-20">
+                        <div class="h-10 bg-white/5 rounded-xl w-full"></div>
+                        <div class="h-10 bg-white/5 rounded-xl w-5/6"></div>
+                        <div class="h-10 bg-white/5 rounded-xl w-4/6"></div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-8 -right-8 glass p-6 rounded-3xl border-white/20 shadow-2xl animate-bounce">
+                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Januari 2026</p>
+                    <p class="text-2xl font-black text-white">+$1.694,88</p>
+                    <p class="text-[9px] text-mint font-bold uppercase tracking-tighter">Insider Signalen</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 py-24 border-t border-white/5">
+        <div class="grid md:grid-cols-4 gap-12 text-center">
+            <div class="space-y-4">
+                <div class="w-12 h-12 glass rounded-xl flex items-center justify-center mx-auto accent-mint">
+                    <svg width="20" height="20" viewBox="0 0 20 20" class="fill-current"><path d="M2.5 1.25H1.25V17.5c0 .69.56 1.25 1.25 1.25h16.25V17.5H2.5V1.25zm16.25 4.375h-4.375v1.25h2.244l-4.744 4.744L9.194 8.93a.625.625 0 0 0-.888 0L3.75 13.494l.881.881 4.119-4.119 2.681 2.688a.625.625 0 0 0 .888 0L17.5 7.756V10h1.25V5.625z"/></svg>
+                </div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-white">24/7 Monitoring</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Onze algoritmes scannen continu de markt op uitbraken.</p>
+            </div>
+            <div class="space-y-4">
+                <div class="w-12 h-12 glass rounded-xl flex items-center justify-center mx-auto accent-mint">
+                    <svg width="20" height="20" viewBox="0 0 20 20" class="fill-current"><path d="M12.5 15H7.412a2.606 2.606 0 0 0-.268-.625l6.606-6.606c.376.23.809.354 1.25.356A2.5 2.5 0 1 0 12.588 5H8.75v1.25h3.838c.061.22.152.43.268.625L6.25 13.481A2.413 2.413 0 0 0 5 13.125a2.5 2.5 0 1 0 2.412 3.125H12.5v1.875h5v-5h-5V15z"/></svg>
+                </div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-white">Geen Emotie</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Systemen leveren rendement zonder ruis of menselijke angst.</p>
+            </div>
+            <div class="space-y-4">
+                <div class="w-12 h-12 glass rounded-xl flex items-center justify-center mx-auto accent-mint">
+                    <svg width="20" height="20" viewBox="0 0 20 20" class="fill-current"><path d="M15.625 14.375h-.013a.626.626 0 0 1-.588-.454l-1.98-6.927-1.21 3.225a.625.625 0 0 1-.584.406h-2.5v-1.25h2.067l1.723-4.594a.625.625 0 0 1 1.186.047l1.945 6.808 1.236-3.708A.624.624 0 0 1 17.5 7.5H20v1.25h-2.05l-1.732 5.197a.624.624 0 0 1-.593.428"/></svg>
+                </div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-white">Telegram Gemak</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Directe meldingen op je telefoon. Beslis zelf je trades.</p>
+            </div>
+            <div class="space-y-4">
+                <div class="w-12 h-12 glass rounded-xl flex items-center justify-center mx-auto accent-mint">
+                    <svg width="20" height="20" viewBox="0 0 20 20" class="fill-current"><path d="M18.75 11.875h-2.5v-2.5H15V15H5V5h5.625V3.75h-2.5v-2.5h-1.25v2.5H5c-.69 0-1.25.56-1.25 1.25v1.875h-2.5v1.25h2.5v3.75h-2.5v1.25h2.5V15c0 .69.56 1.25 1.25 1.25h1.875v2.5h1.25v-2.5h3.75v2.5h1.25v-2.5H15"/></svg>
+                </div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-white">Expertise</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Ervaren analisten delen continu hun visie op de markt.</p>
+            </div>
+        </div>
+    </section>
+
 </body>
 </html>
