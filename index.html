@@ -3,144 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beurssignalen Nieuw | Data-gedreven Trading</title>
+    <title>Beurssignalen Nieuw | Next-Gen AI Trading</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f1115; color: #e5e7eb; }
-        .bg-dark-gradient { background: linear-gradient(180deg, #12141a 0%, #0f1115 100%); }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: #e5e7eb; overflow-x: hidden; }
+        .bg-dark-grid {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
         .accent-mint { color: #00FFC3; }
         .bg-mint { background-color: #00FFC3; }
-        .border-gold { border-color: #D4AF37; }
         .text-gold { color: #D4AF37; }
-        .border-electric { border-color: #007BFF; }
+        .border-gold { border-color: #D4AF37; }
         .text-electric { color: #007BFF; }
-        .card-blur { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.03); }
+        .glass { backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); }
+        .hero-glow { position: absolute; top: -10%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,255,195,0.08) 0%, transparent 70%); z-index: -1; }
+        .btn-shadow { shadow-[0_0_20px_rgba(0,255,195,0.25)]; }
     </style>
 </head>
-<body class="bg-dark-gradient">
+<body class="bg-dark-grid">
 
-    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
-        <div class="text-2xl font-bold tracking-tighter text-white">BEURSSIGNALEN<span class="accent-mint">.</span></div>
-        <div class="hidden md:flex space-x-8 text-sm font-medium">
-            <a href="#" class="hover:text-white transition">Producten</a>
-            <a href="#" class="hover:text-white transition">Resultaten</a>
-            <a href="#" class="hover:text-white transition">Over ons</a>
+    <div class="hero-glow"></div>
+
+    <nav class="sticky top-0 z-50 glass border-b border-white/5 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="/" class="flex items-center">
+                <svg width="180" height="25" viewBox="0 0 192 27" xmlns="http://www.w3.org/2000/svg" class="fill-current text-white">
+                    <path d="M158.067 19.44c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863V3.834c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.504-.09.99-.198 1.458-.324.468-.144.81-.297 1.026-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v14.85c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.999-.054c-.324 0-.666-.009-1.026-.027h-2.106c-.36.018-.72.027-1.08.027-.342.018-.657.036-.945.054zm-49.282 0c0-.18.009-.369.027-.567.018-.216.054-.414.108-.594.72 0 1.206-.162 1.458-.486.27-.342.405-.963.405-1.863v-5.346c0-.414-.045-.765-.135-1.053-.072-.288-.252-.504-.54-.648-.288-.144-.738-.216-1.35-.216 0-.198.018-.378.054-.54.036-.162.099-.315.189-.459.27 0 .648-.045 1.134-.135.486-.09.963-.198 1.431-.324.486-.144.837-.297 1.053-.459a.78.78 0 0 1 .405.324c.126.162.189.414.189.756v8.1c0 .9.117 1.521.351 1.863.252.324.666.486 1.242.486.054.18.09.387.108.621.018.234.027.414.027.54l-.972-.054c-.342 0-.693-.009-1.053-.027h-2.106c-.36.018-.711.027-1.053.027l-.972.054zm2.997-15.741a1.54 1.54 0 0 1-1.134-.459 1.509 1.509 0 0 1-.459-1.107c0-.486.162-.882.486-1.188.324-.306.693-.459 1.107-.459.486 0 .873.153 1.161.459.306.306.459.702.459 1.188 0 .414-.162.783-.486 1.107a1.54 1.54 0 0 1-1.134.459zM32.539 1.026c.36.018.792.036 1.296.054.522.018 1.026.027 1.512.027h1.296a30.49 30.49 0 0 1 1.269-.027c.432-.018.864-.027 1.296-.027 1.044 0 1.998.108 2.862.324.864.216 1.557.612 2.079 1.188.54.576.81 1.386.81 2.43 0 1.152-.351 2.142-1.053 2.97-.702.81-1.656 1.305-2.862 1.485a8.803 8.803 0 0 1 2.619.54c.81.288 1.458.756 1.944 1.404.486.648.729 1.53.729 2.646 0 .99-.225 1.89-.675 2.7-.432.792-1.125 1.431-2.079 1.917-.954.468-2.196.702-3.726.702h-3.915c-.72.018-1.386.027-1.998.027a65.8 65.8 0 0 0-1.431.054c0-.234.009-.45.027-.648.018-.198.054-.369.108-.513.486-.036.864-.126 1.134-.27.27-.144.459-.396.567-.756.126-.378.189-.918.189-1.62V4.536c0-.594-.054-1.053-.162-1.377-.108-.342-.306-.576-.594-.702-.27-.144-.639-.234-1.107-.27a1.977 1.977 0 0 1-.108-.513 7.8 7.8 0 0 1-.027-.648z" fill="#FFFFFF"/></svg>
+            </a>
+            <div class="hidden md:flex space-x-8 text-sm font-semibold tracking-wide">
+                <a href="#" class="hover:text-white transition text-gray-400">Producten</a>
+                <a href="#" class="hover:text-white transition text-gray-400">Algoritmes</a>
+                <a href="#" class="hover:text-white transition text-gray-400">Resultaten</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-white text-sm font-bold border border-white/20 px-4 py-2 rounded-lg hover:bg-white/5 transition">Inloggen</a>
+                <a href="#" class="bg-mint text-black px-5 py-2 rounded-lg font-bold text-sm shadow-[0_0_15px_rgba(0,255,195,0.3)] hover:scale-105 transition">Abonneren</a>
+            </div>
         </div>
-        <a href="#" class="bg-mint text-black px-5 py-2 rounded-full font-bold text-sm hover:scale-105 transition shadow-[0_0_15px_rgba(0,255,195,0.3)]">Mijn Account</a>
     </nav>
 
-    <header class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+    <header class="max-w-7xl mx-auto px-6 py-20 lg:py-32 grid lg:grid-cols-2 gap-16 items-center">
         <div>
-            <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">
-                Stop met gokken. <br><span class="accent-mint">Begin met handelen.</span>
+            <div class="inline-block px-3 py-1 rounded-full border border-mint/30 bg-mint/5 text-mint text-xs font-bold uppercase tracking-widest mb-6">
+                Next-Gen AI Algoritmes
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-tight">
+                Handelen op de beurs zonder <span class="accent-mint italic">emoties.</span>
             </h1>
-            <p class="mt-6 text-gray-400 text-lg leading-relaxed">
-                Ontvang real-time signalen gebaseerd op marktstructuur en data, niet op emotie. Sluit je aan bij de slimste beleggers van de Benelux.
+            <p class="mt-8 text-gray-400 text-lg lg:text-xl leading-relaxed max-w-xl">
+                Wij scannen de markt 24/7 met AI-technologie. Ontvang real-time koop- en verkoopsignalen rechtstreeks op je smartphone.
             </p>
             
-            <div class="mt-10 p-1 bg-gradient-to-r from-emerald-500 to-mint-400 rounded-xl max-w-md">
-                <div class="bg-[#0f1115] p-6 rounded-lg">
-                    <label class="block text-sm font-semibold mb-2 text-white">Ontvang de Gratis Breakout Booster Gids</label>
+            <div class="mt-12 glass p-1 rounded-2xl max-w-md">
+                <div class="p-6">
+                    <h3 class="text-white font-bold mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 accent-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Ontvang de gratis Breakout Booster Gids
+                    </h3>
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="email" placeholder="Je beste e-mailadres" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-mint-400">
-                        <button class="bg-mint text-black px-6 py-3 rounded-lg font-bold hover:brightness-110 transition">Verstuur</button>
+                        <input type="email" placeholder="E-mailadres" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-mint transition text-white">
+                        <button class="bg-mint text-black px-6 py-3 rounded-xl font-bold hover:brightness-110 transition shadow-lg">Download</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="relative">
-            <div class="absolute -inset-10 bg-mint/10 blur-3xl rounded-full"></div>
-            <div class="relative card-blur border border-white/10 p-4 rounded-2xl shadow-2xl">
-                <div class="bg-[#1a1d23] rounded-lg p-4 mb-4 border border-white/5">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs text-gray-400">Live Trade Tracker</span>
-                        <span class="flex items-center text-xs accent-mint">● Live</span>
+
+        <div class="relative flex justify-center">
+            <div class="absolute -inset-10 bg-mint/10 blur-[100px] rounded-full"></div>
+            <div class="relative glass rounded-[2.5rem] p-4 w-72 lg:w-80 shadow-2xl border-white/20">
+                <div class="bg-black/40 rounded-[2rem] p-4 overflow-hidden border border-white/5">
+                    <div class="text-center text-[10px] text-gray-500 mb-4">Vandaag 14:02</div>
+                    <div class="glass p-3 rounded-xl mb-4 border-l-4 border-mint transform translate-y-0 opacity-100 transition-all">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-mint">AANDELEN SIGNAAL</span>
+                            <span class="text-[8px] text-gray-500">Nu</span>
+                        </div>
+                        <div class="text-xs text-white font-bold">🚨 BUY $OSS @ $42.50</div>
+                        <div class="text-[10px] text-gray-400 mt-1">Koersdoel: $48.00 | Stop: $40.50</div>
                     </div>
-                    <div class="space-y-3">
-                        <div class="h-8 bg-white/5 rounded flex items-center px-3 justify-between">
-                            <span class="text-xs">Insider: $TSCO</span> <span class="text-xs accent-mint font-bold">+$1.694,88</span>
-                        </div>
-                        <div class="h-8 bg-white/5 rounded flex items-center px-3 justify-between">
-                            <span class="text-xs">Aandelen: $LLKKF</span> <span class="text-xs accent-mint font-bold">+150.0%</span>
-                        </div>
+                    <div class="mt-20 space-y-2 opacity-30">
+                        <div class="h-8 bg-white/5 rounded-lg w-full"></div>
+                        <div class="h-8 bg-white/5 rounded-lg w-3/4"></div>
                     </div>
                 </div>
-                <img src="https://via.placeholder.com/600x400/1a1d23/ffffff?text=Interactieve+Grafiek+Mockup" alt="Platform Preview" class="rounded-lg shadow-inner">
+                <div class="absolute -bottom-6 -right-6 glass p-4 rounded-2xl border-gold/30">
+                    <div class="text-[10px] text-gold font-bold">LAATSTE WINST</div>
+                    <div class="text-xl font-black text-white">+$1.694,88</div>
+                </div>
             </div>
         </div>
     </header>
 
     <section class="max-w-7xl mx-auto px-6 py-12">
-        <div class="border-t border-white/10 pt-12">
-            <h2 class="text-center text-sm uppercase tracking-[0.2em] text-gray-500 mb-8 font-bold">Het Transparency Board (Laatste 30 dagen)</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                <div class="p-6 card-blur rounded-xl border border-white/5">
-                    <p class="text-3xl font-bold text-white">$1.694</p>
-                    <p class="text-xs text-gold font-semibold uppercase">Insider Winst</p>
+        <div class="glass rounded-3xl p-8 lg:p-12 border-white/5 relative overflow-hidden">
+            <div class="grid md:grid-cols-4 gap-8 relative z-10 text-center">
+                <div>
+                    <p class="text-sm uppercase tracking-widest text-gray-500 font-bold mb-2">Januari 2026</p>
+                    <p class="text-4xl font-black text-white">$ 1.694,88</p>
+                    <p class="text-xs text-gold font-bold mt-2">Insider Signalen</p>
                 </div>
-                <div class="p-6 card-blur rounded-xl border border-white/5">
-                    <p class="text-3xl font-bold text-white">150%</p>
-                    <p class="text-xs accent-mint font-semibold uppercase">Top Uitbraak</p>
+                <div class="border-l border-white/10 hidden md:block"></div>
+                <div>
+                    <p class="text-sm uppercase tracking-widest text-gray-500 font-bold mb-2">Beste Trade</p>
+                    <p class="text-4xl font-black text-white">+150,0%</p>
+                    <p class="text-xs accent-mint font-bold mt-2">op LLKKF</p>
                 </div>
-                <div class="p-6 card-blur rounded-xl border border-white/5">
-                    <p class="text-3xl font-bold text-white">39,7%</p>
-                    <p class="text-xs text-electric font-semibold uppercase">Futures AVG</p>
-                </div>
-                <div class="p-6 card-blur rounded-xl border border-white/5">
-                    <p class="text-3xl font-bold text-white">24/7</p>
-                    <p class="text-xs text-gray-400 font-semibold uppercase">Monitoring</p>
+                <div>
+                    <p class="text-sm uppercase tracking-widest text-gray-500 font-bold mb-2">Gemiddeld</p>
+                    <p class="text-4xl font-black text-white">39,74%</p>
+                    <p class="text-xs text-electric font-bold mt-2">Future Signalen</p>
                 </div>
             </div>
+        </div>
+        <div class="mt-8 text-center">
+            <button class="text-gray-500 text-sm font-bold flex items-center mx-auto hover:text-white transition">
+                Bekijk ons volledige trackrecord <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
         </div>
     </section>
 
     <section class="max-w-7xl mx-auto px-6 py-20">
+        <h2 class="text-3xl font-black text-white mb-12 text-center">Kies je specialisme</h2>
         <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-8 rounded-3xl border border-white/10 card-blur hover:border-mint transition duration-500">
-                <div class="w-12 h-12 bg-mint/20 rounded-xl flex items-center justify-center mb-6">
-                    <svg class="w-6 h-6 accent-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            
+            <div class="glass p-8 rounded-3xl group hover:border-mint transition-all duration-500">
+                <div class="w-14 h-14 bg-mint/10 rounded-2xl flex items-center justify-center mb-6 border border-mint/20">
+                    <svg width="28" height="28" viewBox="0 0 32 32" class="text-mint fill-current">
+                        <path d="M5 20a1 1 0 0 1 0-2h6a1 1 0 0 1 0 2H5z"/><path d="M12 19a1 1 0 0 1-2 0V9a1 1 0 0 1 2 0v10zm4-6a1 1 0 0 1-2 0v-2a1 1 0 0 1 2 0v2zm-8 6a1 1 0 0 1-2 0v-6a1 1 0 0 1 2 0v6z"/>
+                    </svg>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Aandelen & Opties</h3>
-                <p class="text-gray-400 text-sm mb-6">Focus op gevestigde uitbraken en volume-explosies. Directe meldingen voor actie.</p>
-                <a href="#" class="accent-mint font-bold text-sm inline-flex items-center group">Bekijk Signalen <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+                <h3 class="text-xl font-bold text-white mb-4">Aandelen & Opties</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    Focus op "Volume-explosies" en "Gevestigde uitbraken". Ideaal voor beleggers die zoeken naar actie en rendement.
+                </p>
+                <a href="#" class="text-mint text-sm font-black flex items-center group-hover:translate-x-2 transition-transform">
+                    Ontdek signalen <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
             </div>
 
-            <div class="p-8 rounded-3xl border border-gold/30 bg-[#1a1d23] hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition duration-500">
-                <div class="w-12 h-12 bg-gold/20 rounded-xl flex items-center justify-center mb-6">
-                    <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <div class="glass p-8 rounded-3xl border-gold group bg-[#151820] shadow-2xl relative">
+                <div class="absolute top-4 right-4 text-[8px] bg-gold text-black px-2 py-0.5 rounded font-bold uppercase tracking-widest">Slim Geld</div>
+                <div class="w-14 h-14 bg-gold/10 rounded-2xl flex items-center justify-center mb-6 border border-gold/30">
+                    <svg width="28" height="28" viewBox="0 0 38 37" class="text-gold fill-current">
+                        <path d="M12.814 15.732a4.712 4.712 0 0 0-.204 1.39c0 2.799 2.257 7.128 5.27 7.128 3.012 0 5.268-4.33 5.268-7.128 0-.474-.073-.942-.204-1.39 1.033-.596 1.644-1.383 1.644-2.274"/>
+                    </svg>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3 text-gold">Insider Signalen</h3>
-                <p class="text-gray-400 text-sm mb-6">Handel zij aan zij met degenen die de regels maken. Wij volgen de transacties van politici.</p>
-                <a href="#" class="text-gold font-bold text-sm inline-flex items-center group">Exclusieve Toegang <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+                <h3 class="text-xl font-bold text-gold mb-4 uppercase tracking-tighter">Insider Signalen</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6 italic">
+                    "Handel zij aan zij met degenen die de regels maken." We volgen politici en directeurs in real-time.
+                </p>
+                <a href="#" class="text-gold text-sm font-black flex items-center">
+                    Betreed de Inner Circle <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
             </div>
 
-            <div class="p-8 rounded-3xl border border-white/10 card-blur hover:border-electric transition duration-500 text-white">
-                <div class="w-12 h-12 bg-electric/20 rounded-xl flex items-center justify-center mb-6">
-                    <svg class="w-6 h-6 text-electric" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <div class="glass p-8 rounded-3xl group hover:border-electric transition-all duration-500">
+                <div class="w-14 h-14 bg-electric/10 rounded-2xl flex items-center justify-center mb-6 border border-electric/20">
+                    <svg width="28" height="28" viewBox="0 0 38 38" class="text-electric fill-current">
+                        <path d="M36.992 26.492a.988.988 0 0 1-.713-.308 1.073 1.073 0 0 1-.295-.742v-5.486"/>
+                    </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Future Signalen</h3>
-                <p class="text-gray-400 text-sm mb-6">Snelheid en technologie. Indexen en crypto op het scherpst van de snede.</p>
-                <a href="#" class="text-electric font-bold text-sm inline-flex items-center group">Start Nu <span class="ml-2 group-hover:translate-x-1 transition">→</span></a>
+                <h3 class="text-xl font-bold text-white mb-4">Future Signalen</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    Snelheid en technologie. Micro futures op indices, crypto en grondstoffen. Voor de 24/7 markt.
+                </p>
+                <a href="#" class="text-electric text-sm font-black flex items-center group-hover:translate-x-2 transition-transform">
+                    Bekijk actie <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
             </div>
+
         </div>
     </section>
 
-    <section class="max-w-4xl mx-auto px-6 py-24 text-center">
-        <div class="card-blur border border-white/10 p-12 rounded-[3rem] relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-8 opacity-20">
-                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.891 8.146l-2.003 9.464c-.149.659-.54 1.222-1.09 1.488-.55.266-1.19.231-1.71-.1l-3.322-2.451-1.603 1.545c-.215.207-.514.307-.808.27-.294-.037-.561-.2-.733-.446l-2.46-3.518-2.148-.671c-.604-.188-.934-.841-.755-1.423s.803-.941 1.408-.813l15.196 3.193c.613.129 1.011.722.927 1.344z"/></svg>
-            </div>
-            <h2 class="text-3xl font-bold text-white mb-6">Eerst even proeven?</h2>
-            <p class="text-gray-400 mb-8 max-w-md mx-auto">
-                Kijk over onze schouder mee. Ontvang de actie van de dag direct op je smartphone via ons gratis kanaal.
+    <section class="max-w-4xl mx-auto px-6 py-20 text-center border-t border-white/5">
+        <h2 class="text-2xl lg:text-3xl font-black text-white mb-6">Waarom de meeste beleggers geld verliezen</h2>
+        <p class="text-gray-400 leading-loose">
+            De markt wordt gedreven door emotie: angst en hebzucht. Onze algoritmes kennen die emoties niet. 
+            Ze scannen marktstructuren en slaan pas aan als alle lichten op groen staan. 
+            Dat geeft je de discipline die nodig is om te winnen.
+        </p>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 py-24">
+        <div class="glass p-12 lg:p-20 rounded-[3rem] text-center border-mint/20 relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-mint/5 blur-[80px] rounded-full"></div>
+            <h2 class="text-3xl lg:text-5xl font-black text-white mb-8 relative z-10">Klaar om te volgen?</h2>
+            <p class="text-gray-400 mb-12 max-w-xl mx-auto relative z-10">
+                Word lid van ons gratis Telegram-kanaal en zie de trades live binnenkomen voordat je een abonnement afsluit.
             </p>
-            <button class="bg-sky-500 text-white px-10 py-4 rounded-full font-bold hover:bg-sky-400 transition flex items-center mx-auto">
-                Word lid van Gratis Telegram
-            </button>
-            <p class="mt-6 text-xs text-gray-500 uppercase tracking-widest">Klikken. Volgen. Handelen.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+                <a href="#" class="bg-mint text-black px-10 py-5 rounded-2xl font-black hover:scale-105 transition btn-shadow">Start Gratis op Telegram</a>
+                <a href="#" class="glass text-white px-10 py-5 rounded-2xl font-black hover:bg-white/5 transition">Bekijk Pakketten</a>
+            </div>
+            <div class="mt-12 text-xs text-gray-600 uppercase tracking-widest font-bold">● Ruim 1.500 beleggers gingen u voor</div>
         </div>
     </section>
+
+    <footer class="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div class="text-gray-500 text-xs font-bold uppercase tracking-widest">© 2026 Beurssignalen. All rights reserved.</div>
+        <div class="flex space-x-8 text-xs font-bold text-gray-500 uppercase tracking-tighter">
+            <a href="#" class="hover:text-white transition">Privacy</a>
+            <a href="#" class="hover:text-white transition">Disclaimer</a>
+            <a href="#" class="hover:text-white transition">Contact</a>
+        </div>
+    </footer>
 
 </body>
 </html>
